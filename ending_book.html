@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사건 결말서 — Black Corp.</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #f0f0ec;
+  color: #222;
+  font-family: 'Noto Serif KR', 'Malgun Gothic', 'Apple SD Gothic Neo', serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 30px 16px 60px;
+}
+
+#app { max-width: 780px; width: 100%; }
+
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.4s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 공통 카드 ── */
+.card {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 40px 44px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+@media (max-width: 600px) { .card { padding: 28px 20px; } }
+
+/* ── 표지 ── */
+.cover-wrap {
+  text-align: center;
+  padding: 60px 40px 50px;
+  border: 2px solid #ccc;
+  position: relative;
+}
+.stamp {
+  display: inline-block;
+  border: 4px solid #b52200;
+  color: #b52200;
+  font-size: 22px;
+  font-weight: 900;
+  padding: 6px 14px;
+  letter-spacing: 3px;
+  transform: rotate(-12deg);
+  font-family: 'Arial Black', Impact, sans-serif;
+  margin-bottom: 36px;
+}
+.cover-title {
+  font-size: 52px;
+  font-weight: 900;
+  color: #111;
+  letter-spacing: -1px;
+  line-height: 1.15;
+  margin-bottom: 36px;
+}
+.lock-icon { font-size: 64px; margin-bottom: 28px; display: block; }
+.warning-box {
+  background: #111;
+  border: 2px solid #111;
+  display: inline-block;
+  padding: 16px 32px;
+  margin-bottom: 36px;
+}
+.warning-box p { font-size: 17px; line-height: 2; color: #f0f0ec; }
+.brand-label { font-size: 17px; font-weight: 700; color: #555; letter-spacing: 5px; }
+
+/* ── 섹션 헤더 ── */
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111;
+  border-bottom: 2px solid #111;
+  padding-bottom: 14px;
+  margin-bottom: 26px;
+  letter-spacing: 0.5px;
+}
+
+/* ── 본문 ── */
+.body-text {
+  font-size: 15.5px;
+  line-height: 2.1;
+  color: #333;
+}
+.body-text p { margin-bottom: 14px; }
+
+/* ── 화자 이름 컬러 ── */
+.speaker        { font-weight: 700; }
+.donald         { color: #c0001a; }   /* 붉은색 */
+.sullivan       { color: #6600cc; }   /* 보라색 */
+.joel           { color: #0044cc; }   /* 파란색 */
+.michael        { color: #1a7a1a; }   /* 초록색 */
+.catherine      { color: #cc5500; }   /* 주황색 */
+.grace          { color: #8a6800; }   /* 어두운 노란색 */
+.lawyer         { color: #444; }      /* 변호사/이사회 의장 등 기타 */
+
+.narration { color: #777; font-style: italic; }
+.emphasis  { color: #111; font-weight: 600; }
+
+/* ── 지시 박스 ── */
+.direction-box {
+  background: #f8f7f4;
+  border: 1px dashed #bbb;
+  border-radius: 3px;
+  padding: 18px 22px;
+  margin: 28px 0;
+  font-size: 14.5px;
+  line-height: 1.9;
+  color: #555;
+}
+.direction-box strong { color: #333; }
+
+/* ── 선택 버튼 그룹 ── */
+.choice-group { margin: 28px 0; }
+.choice-label {
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.btn {
+  display: block;
+  width: 100%;
+  background: #fafafa;
+  border: 1px solid #ccc;
+  color: #333;
+  padding: 14px 20px;
+  margin: 7px 0;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: inherit;
+  text-align: left;
+  border-radius: 2px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  line-height: 1.5;
+}
+.btn:hover { background: #f0eeea; border-color: #888; color: #111; }
+
+.btn-red  { border-left: 4px solid #c0001a; background: #fff8f8; color: #c0001a; }
+.btn-red:hover  { background: #ffeeed; }
+
+.btn-green { border-left: 4px solid #1a7a1a; background: #f8fff8; color: #1a7a1a; }
+.btn-green:hover { background: #eeffee; }
+
+.btn-blue { border-left: 4px solid #0044cc; background: #f6f8ff; color: #0044cc; }
+.btn-blue:hover { background: #eef1ff; }
+
+.btn-gold { border-left: 4px solid #8a6800; background: #fdfaf0; color: #7a5800; }
+.btn-gold:hover { background: #f8f2d8; }
+
+/* ── 엔딩 태그 ── */
+.end-tag {
+  text-align: center;
+  color: #888;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  padding: 28px;
+  border: 1px solid #ddd;
+  margin-top: 36px;
+  background: #fafafa;
+}
+
+/* ── 페이지 번호 ── */
+.pg-num {
+  text-align: right;
+  color: #aaa;
+  font-size: 12px;
+  margin-top: 28px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+/* ── 히스토리 뒤로가기 ── */
+#back-btn {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #555;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  border-radius: 2px;
+  display: none;
+  z-index: 100;
+  transition: all 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+#back-btn:hover { background: #f5f5f5; color: #111; border-color: #888; }
+
+/* ── 진행 표시 ── */
+#state-bar {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #666;
+  padding: 7px 14px;
+  font-size: 12px;
+  border-radius: 2px;
+  z-index: 100;
+  display: none;
+  max-width: 260px;
+  line-height: 1.6;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* ── 증거물 체크리스트 ── */
+.evidence-list { list-style: none; margin: 20px 0; }
+.evidence-list li {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+}
+.evidence-list li input[type="checkbox"] {
+  width: 18px; height: 18px;
+  margin-right: 14px;
+  cursor: pointer;
+  accent-color: #c0001a;
+}
+.evidence-count-display {
+  font-size: 18px;
+  font-weight: 700;
+  color: #c0001a;
+  text-align: center;
+  margin: 14px 0;
+}
+
+/* ── 구분선 ── */
+hr.divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
+
+/* ── 코멘터리 ── */
+.commentary-text {
+  font-size: 15px;
+  line-height: 2.2;
+  color: #444;
+}
+.commentary-text p { margin-bottom: 18px; }
+
+/* ── 목차 ── */
+.toc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 5px 0;
+  border-bottom: 1px dotted #ddd;
+  font-size: 14px;
+  color: #666;
+}
+.toc-row.toc-main { color: #222; font-weight: 600; padding-top: 10px; }
+.toc-row.toc-sub  { padding-left: 18px; }
+.toc-row.toc-sub2 { padding-left: 36px; }
+.toc-row span { color: #aaa; font-size: 13px; }
+
+/* ── 점수 계산 (병합) ── */
+.c-donald    { color: #c0001a; }
+.c-sullivan  { color: #6600cc; }
+.c-joel      { color: #0044cc; }
+.c-michael   { color: #1a7a1a; }
+.c-catherine { color: #cc5500; }
+.c-grace     { color: #8a6800; }
+
+.proj-section {
+  margin-bottom: 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px 18px 14px;
+  background: #fafafa;
+  transition: border-color 0.4s ease, background-color 0.4s ease;
+}
+.proj-section.success { border-color: #1a7a1a; background: #f3fbf3; }
+.proj-section.fail    { border-color: #c0001a; background: #fdf5f5; }
+.proj-label {
+  font-size: 13px; font-weight: 700; color: #444;
+  letter-spacing: 0.5px; margin-bottom: 14px;
+  transition: color 0.4s ease;
+}
+.proj-section.success .proj-label { color: #1a7a1a; }
+.proj-section.fail    .proj-label { color: #c0001a; }
+
+.chars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 12px;
+}
+@media (max-width: 500px) { .chars-grid { grid-template-columns: repeat(2, 1fr); } }
+.char-item { display: flex; align-items: center; gap: 5px; }
+.cname { font-size: 12px; font-weight: 700; min-width: 44px; flex-shrink: 0; }
+
+.cir-btn {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #c8c8c8;
+  background: #f7f7f5;
+  font-size: 15px; font-weight: 500;
+  cursor: pointer; color: #444; padding: 0; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.1s; user-select: none;
+}
+.cir-btn:hover  { background: #e8e8e4; border-color: #888; }
+.cir-btn:active { transform: scale(0.9); background: #ddd; }
+
+.cval { min-width: 26px; text-align: center; font-size: 17px; font-weight: 700; color: #111; flex-shrink: 0; }
+
+.score-divider { border: none; border-top: 1px solid #eee; margin: 24px 0 20px; }
+.btn-check {
+  width: 100%; padding: 15px;
+  background: #111; color: #fff; border: none; border-radius: 4px;
+  font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+  letter-spacing: 0.5px; transition: background 0.15s;
+}
+.btn-check:hover  { background: #2a2a2a; }
+.btn-check:active { background: #000; }
+
+.result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.result-box {
+  border-radius: 6px; text-align: center;
+  padding: 14px 8px 12px;
+  border: 1.5px solid #e8e8e8; background: #fafafa;
+  transition: all 0.3s;
+}
+.result-box.success { background: #f0faf0; border-color: #1a7a1a; }
+.result-box.fail    { background: #fff5f5; border-color: #c0001a; }
+.rb-proj  { font-size: 11px; color: #aaa; margin-bottom: 6px; font-weight: 600; }
+.rb-score { font-size: 26px; font-weight: 900; color: #ccc; margin-bottom: 4px; min-height: 34px; }
+.result-box.success .rb-score { color: #1a7a1a; }
+.result-box.fail    .rb-score { color: #c0001a; }
+.rb-vrd { font-size: 12px; font-weight: 700; color: #ccc; }
+.result-box.success .rb-vrd { color: #1a7a1a; }
+.result-box.fail    .rb-vrd { color: #c0001a; }
+.result-total {
+  text-align: center; font-size: 22px; font-weight: 900; color: #111;
+  padding: 16px 0 20px; border-top: 1px solid #eee;
+}
+.btn-reset {
+  display: block; margin: 12px auto 0;
+  background: none; border: none; color: #bbb;
+  font-size: 13px; cursor: pointer; font-family: inherit;
+  text-decoration: underline; padding: 4px;
+}
+.btn-reset:hover { color: #777; }
+</style>
+</head>
+<body>
+
+<button id="back-btn" onclick="goBack()">← 뒤로</button>
+<div id="state-bar"></div>
+
+<div id="app">
+
+<!-- ══════════════════════════════════════
+     표지
+══════════════════════════════════════ -->
+<div id="cover" class="page active">
+  <div class="card cover-wrap">
+    <div class="stamp">CONFIDENTIAL</div>
+    <div class="cover-title">사건 결말서</div>
+    <span class="lock-icon">🔒</span>
+    <div class="warning-box">
+      <p>경고</p>
+      <p>별도의 지시가 있을 때까지<br>절대 열람하지 마시오.</p>
+    </div>
+    <div class="brand-label">Black Corp.</div>
+    <div style="margin-top:48px; display:flex; flex-direction:column; gap:12px; align-items:center;">
+      <button class="btn btn-red" onclick="goTo('score_narration')" style="width:260px; font-size:15px; padding:14px 20px;">▶ 점수 계산 후 열람하기</button>
+      <button class="btn" onclick="goTo('toc')" style="width:260px; font-size:15px; padding:14px 20px; background:#444; color:#fff; border-color:#444;">▶ 사건 결말서 열람하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     점수 계산 — 1단계: 프로젝트 종료 낭독
+══════════════════════════════════════ -->
+<div id="score_narration" class="page">
+  <div class="card">
+    <div class="section-title">&lt;프로젝트 종료&gt;</div>
+    <div class="body-text">
+      <p class="narration">(아래의 지문을 <span class="speaker donald">도날드</span>가 낭독해주세요.)</p>
+      <p>프로젝트는 끝났다. 우리가 할 수 있는 건 다 했다.<br>이제 남은 건 세상이 우리를 어떻게 받아들이느냐뿐이다.</p>
+      <p>나는 천천히 테이블을 둘러봤다. 저마다 표정을 숨기고 있었지만, 긴장은 숨길 수 없었다.<br>
+      오늘, 프로젝트를 진행하는 동안 많은 것들을 봤다.<br>
+      위기 앞에서 사람은 본색을 드러낸다고 했던가.<br>
+      책임을 떠넘기고, 공로를 가로채고, 살아남기 위해 누군가를 밟는 모습들.<br>
+      그리고 솔직히 말하면, 나 역시 다르지 않았다.</p>
+      <p>회사를 살리겠다는 말 뒤에 얼마나 많은 것들을 숨겨왔는지,<br>이 자리에 앉아서야 다시 생각하게 된다.</p>
+      <p>옥탑방에서 처음 콘텐츠를 세상에 내놓던 날 밤이 떠올랐다.<br>
+      그때도 이렇게 앉아서 기다렸다.<br>
+      동료들의 얼굴을 하나씩 훑었다.<br>
+      많은 것들이 뒤틀리고 어긋났지만,<br>
+      결국 마지막까지 이 자리를 지킨 건 이 사람들이었다.</p>
+      <p>결과가 어떻게 나오든, 그 사실만큼은 변하지 않는다.</p>
+      <p>나는 천천히 화면을 켰다.</p>
+    </div>
+  </div>
+  <div class="choice-group">
+    <button class="btn btn-red" onclick="goTo('score_calc')">점수 계산 →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     점수 계산 — 2단계: 점수 입력
+══════════════════════════════════════ -->
+<div id="score_calc" class="page">
+  <div class="card">
+    <div class="section-title">프로젝트 점수 계산</div>
+
+    <!-- 프로젝트 A -->
+    <div class="proj-section" id="ps_a">
+      <div class="proj-label">프로젝트 A</div>
+      <div class="chars-grid">
+        <div class="char-item"><span class="cname c-donald">도날드</span><button class="cir-btn" onclick="adj('a','donald',-1)">−</button><span class="cval" id="v_a_donald">0</span><button class="cir-btn" onclick="adj('a','donald',1)">+</button></div>
+        <div class="char-item"><span class="cname c-sullivan">설리번</span><button class="cir-btn" onclick="adj('a','sullivan',-1)">−</button><span class="cval" id="v_a_sullivan">0</span><button class="cir-btn" onclick="adj('a','sullivan',1)">+</button></div>
+        <div class="char-item"><span class="cname c-joel">조엘</span><button class="cir-btn" onclick="adj('a','joel',-1)">−</button><span class="cval" id="v_a_joel">0</span><button class="cir-btn" onclick="adj('a','joel',1)">+</button></div>
+        <div class="char-item"><span class="cname c-michael">마이클</span><button class="cir-btn" onclick="adj('a','michael',-1)">−</button><span class="cval" id="v_a_michael">0</span><button class="cir-btn" onclick="adj('a','michael',1)">+</button></div>
+        <div class="char-item"><span class="cname c-catherine">캐서린</span><button class="cir-btn" onclick="adj('a','catherine',-1)">−</button><span class="cval" id="v_a_catherine">0</span><button class="cir-btn" onclick="adj('a','catherine',1)">+</button></div>
+        <div class="char-item"><span class="cname c-grace">그레이스</span><button class="cir-btn" onclick="adj('a','grace',-1)">−</button><span class="cval" id="v_a_grace">0</span><button class="cir-btn" onclick="adj('a','grace',1)">+</button></div>
+      </div>
+    </div>
+
+    <!-- 프로젝트 B -->
+    <div class="proj-section" id="ps_b">
+      <div class="proj-label">프로젝트 B</div>
+      <div class="chars-grid">
+        <div class="char-item"><span class="cname c-donald">도날드</span><button class="cir-btn" onclick="adj('b','donald',-1)">−</button><span class="cval" id="v_b_donald">0</span><button class="cir-btn" onclick="adj('b','donald',1)">+</button></div>
+        <div class="char-item"><span class="cname c-sullivan">설리번</span><button class="cir-btn" onclick="adj('b','sullivan',-1)">−</button><span class="cval" id="v_b_sullivan">0</span><button class="cir-btn" onclick="adj('b','sullivan',1)">+</button></div>
+        <div class="char-item"><span class="cname c-joel">조엘</span><button class="cir-btn" onclick="adj('b','joel',-1)">−</button><span class="cval" id="v_b_joel">0</span><button class="cir-btn" onclick="adj('b','joel',1)">+</button></div>
+        <div class="char-item"><span class="cname c-michael">마이클</span><button class="cir-btn" onclick="adj('b','michael',-1)">−</button><span class="cval" id="v_b_michael">0</span><button class="cir-btn" onclick="adj('b','michael',1)">+</button></div>
+        <div class="char-item"><span class="cname c-catherine">캐서린</span><button class="cir-btn" onclick="adj('b','catherine',-1)">−</button><span class="cval" id="v_b_catherine">0</span><button class="cir-btn" onclick="adj('b','catherine',1)">+</button></div>
+        <div class="char-item"><span class="cname c-grace">그레이스</span><button class="cir-btn" onclick="adj('b','grace',-1)">−</button><span class="cval" id="v_b_grace">0</span><button class="cir-btn" onclick="adj('b','grace',1)">+</button></div>
+      </div>
+    </div>
+
+    <!-- 프로젝트 C -->
+    <div class="proj-section" id="ps_c">
+      <div class="proj-label">프로젝트 C</div>
+      <div class="chars-grid">
+        <div class="char-item"><span class="cname c-donald">도날드</span><button class="cir-btn" onclick="adj('c','donald',-1)">−</button><span class="cval" id="v_c_donald">0</span><button class="cir-btn" onclick="adj('c','donald',1)">+</button></div>
+        <div class="char-item"><span class="cname c-sullivan">설리번</span><button class="cir-btn" onclick="adj('c','sullivan',-1)">−</button><span class="cval" id="v_c_sullivan">0</span><button class="cir-btn" onclick="adj('c','sullivan',1)">+</button></div>
+        <div class="char-item"><span class="cname c-joel">조엘</span><button class="cir-btn" onclick="adj('c','joel',-1)">−</button><span class="cval" id="v_c_joel">0</span><button class="cir-btn" onclick="adj('c','joel',1)">+</button></div>
+        <div class="char-item"><span class="cname c-michael">마이클</span><button class="cir-btn" onclick="adj('c','michael',-1)">−</button><span class="cval" id="v_c_michael">0</span><button class="cir-btn" onclick="adj('c','michael',1)">+</button></div>
+        <div class="char-item"><span class="cname c-catherine">캐서린</span><button class="cir-btn" onclick="adj('c','catherine',-1)">−</button><span class="cval" id="v_c_catherine">0</span><button class="cir-btn" onclick="adj('c','catherine',1)">+</button></div>
+        <div class="char-item"><span class="cname c-grace">그레이스</span><button class="cir-btn" onclick="adj('c','grace',-1)">−</button><span class="cval" id="v_c_grace">0</span><button class="cir-btn" onclick="adj('c','grace',1)">+</button></div>
+      </div>
+    </div>
+
+    <hr class="score-divider">
+    <button class="btn-check" onclick="checkScores()">점수 확인</button>
+  </div>
+
+  <!-- 결과 (점수 확인 후 표시) -->
+  <div class="card" id="result_card" style="display:none;">
+    <div class="result-grid">
+      <div class="result-box" id="rb_a"><div class="rb-proj">프로젝트 A</div><div class="rb-score" id="rb_score_a">—</div><div class="rb-vrd" id="rb_vrd_a">—</div></div>
+      <div class="result-box" id="rb_b"><div class="rb-proj">프로젝트 B</div><div class="rb-score" id="rb_score_b">—</div><div class="rb-vrd" id="rb_vrd_b">—</div></div>
+      <div class="result-box" id="rb_c"><div class="rb-proj">프로젝트 C</div><div class="rb-score" id="rb_score_c">—</div><div class="rb-vrd" id="rb_vrd_c">—</div></div>
+    </div>
+    <div class="result-total" id="result_total">—</div>
+    <button class="btn btn-red" style="display:block; width:100%;" onclick="applyScoreResult()">
+      결말서 시작 →
+    </button>
+    <button class="btn-reset" onclick="resetCalc()">다시 계산</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     목차 + 프로젝트 결과 선택
+══════════════════════════════════════ -->
+<div id="toc" class="page">
+  <div class="card">
+    <div class="section-title">프로젝트 결과</div>
+    <div class="body-text">
+      <p><strong>프로젝트 결과를 확인하고 해당되는 페이지로 이동해 주세요.</strong></p>
+      <p><strong>각자 맡은 캐릭터 대사를 낭독합니다. 캐릭터의 성격과 관계를 살려 낭독해 주세요.</strong></p>
+      <p><strong>※ 나레이션은 <span class="sullivan">설리번</span>이 담당합니다.</strong></p>
+    </div>
+    <div class="choice-group" style="margin-top:28px;">
+      <button class="btn btn-gold" onclick="setResult('all_success')">전부 성공하였다. → 3페이지</button>
+      <button class="btn" onclick="setResult('two_success')">2개 성공하였다. → 11페이지</button>
+      <button class="btn" onclick="setResult('one_success')">1개 성공하였다. → 12페이지</button>
+      <button class="btn btn-red" onclick="setResult('all_fail')">전부 실패하였다. → 13페이지</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0;">
+      <div class="section-title" style="margin-bottom:0; border-bottom:none;">목차</div>
+      <button id="toc-toggle-btn" onclick="toggleToc()" style="background:none; border:1px solid #bbb; border-radius:4px; padding:4px 12px; font-size:13px; cursor:pointer; color:#555;">펼치기 ▼</button>
+    </div>
+    <div style="border-bottom:2px solid #111; margin-bottom:26px; margin-top:14px;"></div>
+    <div id="toc-content" style="display:none;">
+      <div class="toc-row toc-main"><div>프로젝트 결과 발표</div></div>
+      <div class="toc-row toc-main"><div>• 전부 성공</div><span>3p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 전부 성공 — 설리번 지목</div><span>4p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 전부 성공 — 조엘 지목</div><span>5p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 전부 성공 — 마이클 지목</div><span>6p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 전부 성공 — 캐서린 지목</div><span>7p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 전부 성공 — 그레이스 지목</div><span>8p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 전부 성공 (엔딩)</div><span>9p</span></div>
+      <div class="toc-row toc-main"><div>• 2개 성공하였다.</div><span>11p</span></div>
+      <div class="toc-row toc-main"><div>• 1개 성공하였다.</div><span>12p</span></div>
+      <div class="toc-row toc-main"><div>• 전부 실패하였다.</div><span>13p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 구조조정 대상자로 설리번을 지목</div><span>14p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 구조조정 대상자로 조엘을 지목</div><span>15p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 구조조정 대상자로 캐서린을 지목</div><span>16p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 구조조정 대상자로 그레이스를 지목</div><span>17p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 구조조정 대상자로 마이클을 지목</div><span>18p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ &lt;그 후 블랙코퍼레이션&gt; (A)</div><span>20p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ &lt;그 후 블랙코퍼레이션&gt; (B)</div><span>22p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 퇴사한 설리번의 이야기 (엔딩)</div><span>23p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 퇴사한 조엘의 이야기 (엔딩)</div><span>24p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 퇴사한 캐서린의 이야기 (엔딩)</div><span>25p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 퇴사한 그레이스의 이야기 (엔딩)</div><span>26p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 퇴사한 마이클의 이야기 (엔딩)</div><span>27p</span></div>
+      <div class="toc-row toc-sub"><div>▸ 비밀 감사</div><span>28p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 증거물 3개 이하</div><span>29p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 증거물 4개 이상</div><span>30p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 임시 대표 선임 후</div><span>32~36p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ &lt;배임 이후 도날드&gt; (엔딩)</div><span>37p</span></div>
+      <div class="toc-row toc-sub2"><div>◦ 배임 방어 성공 (엔딩)</div><span>39p</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 성공 (p3)
+══════════════════════════════════════ -->
+<div id="all_success" class="page">
+  <div class="card">
+    <div class="section-title">전부 성공</div>
+    <div class="body-text">
+      <p><span class="speaker donald">도날드:</span> 프로젝트 A, 오픈 24시간 성적을 확인하겠습니다.</p>
+      <p><span class="speaker michael">마이클:</span> 오픈 1일차 조회수 20만 회… 신규 탭 실시간 트렌딩 1위… 광고 단가 18% 상승했습니다!</p>
+      <p><span class="speaker catherine">캐서린:</span> 프로젝트 B, 오픈 매출 삼천만 원, 유료 전환율 27%, 일부 제작사로부터 해외 판권 문의가 들어오고 있습니다. 손익분기점 돌파했습니다…!</p>
+      <p class="narration">의자 끝을 붙잡은 도날드의 손에 힘이 들어간다.</p>
+      <p><span class="speaker donald">도날드:</span> 그리고… 프로젝트 C의 지표는 어떻죠, 설리번?</p>
+      <p><span class="speaker sullivan">설리번:</span> 투자사 추가 미팅 요청이 들어왔습니다. 기업 가치 재평가 상향 조정을 제안했습니다. …기업 가치… 복구됐습니다.</p>
+      <p class="narration">아무도 바로 반응하지 못한 채, 정말 맞는지, 잘못 본 건 아닌지, 서로의 얼굴을 확인한다. 도날드가 정적을 깨고 웃으며 고개를 끄덕인다. 그제야 박수가 천천히 터져 나온다.</p>
+      <p class="narration">설리번은 고개를 숙인 채 숨을 고른다. 캐서린은 천장을 바라보며 옅게 웃는다. 마이클은 자리에서 일어나 도날드를 향해 박수를 보낸다. 도날드는 창가로 걸어간다. 강남의 야경이 유리창에 비친다.</p>
+      <p class="narration">옥탑방, 종이박스 책상, 컵라면 냄새가 스쳐 지나간다. 회의실에 가벼운 웃음이 퍼진다. 서로를 향한 경계 대신, 안도의 표정이 번진다.</p>
+      <p><span class="speaker donald">도날드:</span> 여러분이 해냈습니다. 오늘은 여기까지 하죠. 정말 고생 많았습니다.</p>
+      <p class="narration">사람들이 자리에서 일어나 서로의 어깨를 두드리고, 작게 웃으며 문을 향한다. 문이 열리고, 환호가 복도로 흘러나간다.</p>
+      <p><span class="speaker donald">도날드:</span> 잠깐 시간 괜찮습니까. 잠시 따로 이야기 나누고 싶습니다.</p>
+      <p class="narration">모두의 움직임이 멈춘다. 도날드는 한 사람을 향해 덤덤하게 미소지으며 말한다.</p>
+      <p class="narration">천천히 닫히는 문 너머에는 성공의 환호가 점점 멀어진다.</p>
+      <p class="narration">환호가 가라앉은 회의실에, 두 사람만 남는다. 그곳에는 끝나지 않은 선택이 기다린다.</p>
+    </div>
+    <div class="direction-box">
+      <strong>도날드가 지목한 구조조정 대상자에 따라 해당 버튼을 눌러주세요.</strong>
+    </div>
+    <div class="choice-group">
+      <button class="btn" onclick="pickTarget('sullivan')"><b class="sullivan">설리번</b>을 지목 → 4페이지</button>
+      <button class="btn" onclick="pickTarget('joel')"><b class="joel">조엘</b>을 지목 → 5페이지</button>
+      <button class="btn" onclick="pickTarget('michael')"><b class="michael">마이클</b>을 지목 → 6페이지</button>
+      <button class="btn" onclick="pickTarget('catherine')"><b class="catherine">캐서린</b>을 지목 → 7페이지</button>
+      <button class="btn" onclick="pickTarget('grace')"><b class="grace">그레이스</b>를 지목 → 8페이지</button>
+    </div>
+    <div class="pg-num">3</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 성공 — 설리번 지목 (p4)
+══════════════════════════════════════ -->
+<div id="success_sullivan" class="page">
+  <div class="card">
+    <div class="section-title">전부 성공 — 설리번을 지목</div>
+    <div class="body-text">
+      <p class="narration">회의실 문이 닫히자, 야경의 불빛이 유리창에 번졌다. 회의실 안에는 두 사람의 숨소리만 남았다. 도날드는 한동안 아무 말도 하지 않았다.</p>
+      <p><span class="speaker donald">도날드:</span> …설리번을 의심했습니다. 당신이 너무 숫자만 보고 있는 건 아닌지 생각했죠. 설리번의 보고서는 완벽했습니다. 하지만 현장에서 벌어지는 온도와 팀의 감각에서 점점 멀어지고 있는 느낌도 있었습니다. 리스크를 줄이겠다는 보고는 많았지만, 돌파할 결단은 보이지 않는다고 생각했습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 어쩌면… 이 회사가 멈춘 이유가 당신의 '안전하고 보수적인 선택' 때문일지도 모른다고 의심했었습니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> …회사를 지키고 싶었습니다. 회사가, 동료들이 무너질까 봐 두려웠습니다. 그래서 더 냉정해졌습니다. 그게, 회사를 살리는 길이라 생각했습니다. 저는 그냥 제가 할 수 있는 일을 했을 뿐입니다. 그게 숫자였고, 보고서였습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 저도 마찬가지였습니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 네… 느껴졌습니다. 대표님의 판단이 흔들린다고 느꼈고, 이 회사가 다시 일어설 수 있다는 확신을 잃어가고 있었습니다. 그럴수록 저는 더 보수적인 선택만 골랐습니다. 리스크를 줄이는 것 말고는 제가 할 수 있는 게 없다고 생각했습니다.</p>
+      <p><span class="speaker donald">도날드:</span> …그 리스크 관리가 오늘 우리를 살렸습니다.</p>
+      <p class="narration">유리창 너머 도시의 불빛이 두 사람 사이로 번진다. 도날드는 천천히 손을 내민다.</p>
+      <p><span class="speaker donald">도날드:</span> 옥탑방… 아무도 블랙코퍼레이션을 믿지 않았을 때, 제 옆에 서 있던 사람이 당신이었죠. 이 회사의 뼈대를 세운 사람이 당신이었습니다. 그 사실은 변하지 않습니다.</p>
+      <p class="narration">설리번의 눈이 처음으로 흔들린다.</p>
+      <p><span class="speaker donald">도날드:</span> 끝까지… 함께 해주시겠습니까.</p>
+      <p class="narration">잠시 망설이던 설리번이 손을 잡았다. 야경이 그 어느 때보다 밝게 번졌다.</p>
+      <p class="narration">의심은 끝났고, 신뢰는 다시 시작되었다.</p>
+    </div>
+    <div class="direction-box">9페이지의 &lt;전부 성공-엔딩&gt;을 낭독합니다.</div>
+    <button class="btn btn-gold" onclick="goTo('all_success_ending')">→ 전부 성공 엔딩으로 이동 (9p)</button>
+    <div class="pg-num">4</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 성공 — 조엘 지목 (p5)
+══════════════════════════════════════ -->
+<div id="success_joel" class="page">
+  <div class="card">
+    <div class="section-title">전부 성공 — 조엘을 지목</div>
+    <div class="body-text">
+      <p class="narration">회의실 문이 닫히자 환호가 멀어진다. 조엘은 의자에 반듯하게 앉은 채, 표정 하나 바꾸지 않는다.</p>
+      <p><span class="speaker donald">도날드:</span> 당신을 문제의 인물로 의심했습니다.</p>
+      <p><span class="speaker joel">조엘:</span> 이유를 들을 수 있을까요.</p>
+      <p><span class="speaker donald">도날드:</span> 모든 숫자가 당신을 거칩니다. 자금 흐름, 인건비, 투자 집행. 회사가 곪았다면, 당신이 몰랐을 리 없다고 생각했죠.</p>
+      <p><span class="speaker joel">조엘:</span> 몰랐던 건 아닙니다. 다만 저의 역할은 실무가 아닌 기록과 관리, 집행입니다. 저는 그 안에서 최선을 다했습니다. 이해도 없이 다른 이의 역할까지 끌어안는 건 열정이 아니라 역할 침해입니다. 저는 개입하지 않았습니다. 대신 전부 남겼습니다. 누가 어떤 선택을 했는지, 어떤 수정이 있었는지. 왜곡하지 않았고, 숨기지도 않았습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 그래서 이번 프로젝트가 성공했군요.</p>
+      <p class="narration">도날드는 한동안 화면을 바라본다.</p>
+      <p><span class="speaker donald">도날드:</span> 투자자와 접촉한 적 있습니까.</p>
+      <p><span class="speaker joel">조엘:</span> …있습니다. 회사가 왜 흔들리는지 알고 싶어 했습니다. 저도 알고 싶었습니다. 제 직장이니까요.</p>
+      <p><span class="speaker donald">도날드:</span> 그래서… 최종 의견은 어떻습니까.</p>
+      <p><span class="speaker joel">조엘:</span> 내부 문제는 분명했습니다. 하지만 이번 프로젝트에서 개선 의지와 가능성도 확인했습니다. 지금 구조라면… 회사는 다시 성장할 수 있습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 저희 블랙코퍼레이션을 한 번 더 믿어주시겠습니까.</p>
+      <p><span class="speaker joel">조엘:</span> 이미 믿고 있습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 회사가 생존했습니다. 그 공은 당신에게도 있습니다. 이제는 지켜보는 걸로 끝내지 말죠. 다음 구조는 조엘님이 설계해주었으면 합니다.</p>
+      <p class="narration">회의실 문이 열린다. 조엘은 태블릿을 들고 조용히 밖으로 나선다.</p>
+      <p class="narration">이번엔 방관자가 아니라, 설계자로.</p>
+    </div>
+    <div class="direction-box">9페이지의 &lt;전부 성공-엔딩&gt;을 낭독합니다.</div>
+    <button class="btn btn-gold" onclick="goTo('all_success_ending')">→ 전부 성공 엔딩으로 이동 (9p)</button>
+    <div class="pg-num">5</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 성공 — 마이클 지목 (p6)
+══════════════════════════════════════ -->
+<div id="success_michael" class="page">
+  <div class="card">
+    <div class="section-title">전부 성공 — 마이클을 지목</div>
+    <div class="body-text">
+      <p class="narration">회의실 문이 닫히자 소음이 멀어졌다. 강남의 야경이 유리창에 비치고, 둘만의 공간이 되었다. 도날드는 잠시 숨을 고르더니, 조용히 입을 열었다.</p>
+      <p><span class="speaker donald">도날드:</span> 마이클. 당신이 모든 걸 다 잘 해낸 건 아니라는 거, 알고 있습니다.</p>
+      <p><span class="speaker michael">마이클:</span> …대표님. …저는…</p>
+      <p><span class="speaker donald">도날드:</span> 이번 프로젝트를 들여다보면서 많은 것을 봤습니다. 보고 싶지 않았던 것들도. 당신 이름으로 올라온 결과물들. 그 뒤에 누가 있었는지. 몰랐던 게 아닙니다. 다만… 보지 않으려 했습니다.</p>
+      <p class="narration">마이클은 아무 말도 하지 못했다. 변명도, 농담도 떠오르지 않았다.</p>
+      <p><span class="speaker donald">도날드:</span> 5년 전, 내가 아무것도 없을 때 당신이 제일 먼저 제 옆에 섰었습니다. 당신은 항상 끝까지 남아줬었죠.</p>
+      <p class="narration">도날드와 마이클의 머릿속에 옥탑방의 공기, 낡은 전기장판, 미래를 확신하던 그 밤들이 스쳐 지나간다. 마이클의 호흡이 떨린다.</p>
+      <p><span class="speaker michael">마이클:</span> 대표님, 저는… 그렇게 대단한 사람이 아닙니다.</p>
+      <p><span class="speaker donald">도날드:</span> 네. 함께 블랙코퍼레이션의 힘든 순간을 함께 버틴 사람이죠.</p>
+      <p class="narration">마이클의 눈빛이 흔들린다.</p>
+      <p><span class="speaker donald">도날드:</span> 저는 결론을 내렸습니다. 저는 당신을 내보내지 않습니다. 대신, 이제 솔직해집시다. 성장합시다. 회사와 함께. 당신도 알고 있을 겁니다. 지금까지의 방식으로는 더 이상 오래 갈 수 없다는 것을요. 하지만 다시 시작할 기회는 아직 있습니다. 당신이 그걸 선택한다면 말입니다.</p>
+      <p class="narration">마이클은 한동안 아무 말도 하지 못했다. 그리고 천천히 고개를 숙였다.</p>
+      <p><span class="speaker michael">마이클:</span> 대표님… 이번에는 정말로 제대로 해보고 싶습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 함께 해보시죠.</p>
+      <p class="narration">그 말은 판결이 아니라 제안이었다. 마이클은 고개를 숙였다. 유리창 너머로 도시의 불빛이 번진다. 숫자로 증명된 숫자 위에, 신뢰가 세워진다.</p>
+      <p class="narration">두 사람은 나란히 회의실을 나선다.</p>
+    </div>
+    <div class="direction-box">9페이지의 &lt;전부 성공-엔딩&gt;을 낭독합니다.</div>
+    <button class="btn btn-gold" onclick="goTo('all_success_ending')">→ 전부 성공 엔딩으로 이동 (9p)</button>
+    <div class="pg-num">6</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 성공 — 캐서린 지목 (p7)
+══════════════════════════════════════ -->
+<div id="success_catherine" class="page">
+  <div class="card">
+    <div class="section-title">전부 성공 — 캐서린을 지목</div>
+    <div class="body-text">
+      <p class="narration">회의실 문이 닫히자 공기가 묘하게 가라앉는다. 캐서린은 의자에 기대 선 채, 담담한 얼굴로 대표를 바라본다. 이미 짐작하고 있다는 표정이다.</p>
+      <p><span class="speaker donald">도날드:</span> 당신을 문제의 인물로 생각했습니다. 일부러 속도를 늦췄죠. 인력 요청도, 리스크 경고도 반복했습니다. 저는 그걸 투정으로 여겼습니다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 투정이라고 생각하셨다면, 그건 제가 틀렸던 게 아니라 대표님이 듣지 않으신 겁니다.</p>
+      <p><span class="speaker donald">도날드:</span> 맞습니다. 그리고 그건 제 잘못이었습니다. 이번 세 번의 프로젝트에서, 가장 위험한 구간을 모두 당신이 막았습니다. 마감 직전 뒤집힌 기획, 예산 재배치, 외주 리스크 정리. 전부 당신 손이었습니다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 제가 만든 것의 완성도를 지키고 싶었을 뿐이에요. 회사를 위해서가 아니라.</p>
+      <p><span class="speaker donald">도날드:</span> 그 완성도가 회사를 살렸습니다.</p>
+      <p class="narration">잠시 정적이 흐른다.</p>
+      <p><span class="speaker donald">도날드:</span> 떠날 생각이었죠.</p>
+      <p class="narration">캐서린은 대답 대신 시선을 창밖으로 돌린다.</p>
+      <p><span class="speaker donald">도날드:</span> 말리지는 않겠습니다. 당신이 왜 그런 생각을 했는지, 이제는 압니다. 제가 그 이유를 만들었으니까요. 늦었다는 거 압니다. 그래도 한 가지만 말씀드리고 싶었습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 다음 프로젝트, 전권을 드리겠습니다. 인력도, 예산도, 일정도. 처음부터 당신이 설계하는 겁니다. 그때 제가 약속했던 것, 이제야 지키는 겁니다.</p>
+      <p class="narration">긴 침묵이 흘렀다. 캐서린의 표정이 처음으로 무너진다. 냉소가 아닌, 오래 잊고 있던 무언가가 스친다. 그녀는 타고난 작업자였다.</p>
+      <p><span class="speaker catherine">캐서린:</span> …이제 와서 그 말을 들을 줄은 몰랐네요.</p>
+      <p class="narration">유리창에 비친 두 사람의 실루엣이 나란히 선다. 옥탑방에서 시작된 약속이, 다시 다른 형태로 이어진다.</p>
+      <p><span class="speaker catherine">캐서린:</span> …마지막으로, 한 번만 더 믿어보죠.</p>
+      <p class="narration">회의실 문이 열린다. 캐서린은 천천히 숨을 고르고 밖으로 나선다. 이번엔 도망이 아니라, 선택으로.</p>
+    </div>
+    <div class="direction-box">9페이지의 &lt;전부 성공-엔딩&gt;을 낭독합니다.</div>
+    <button class="btn btn-gold" onclick="goTo('all_success_ending')">→ 전부 성공 엔딩으로 이동 (9p)</button>
+    <div class="pg-num">7</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 성공 — 그레이스 지목 (p8)
+══════════════════════════════════════ -->
+<div id="success_grace" class="page">
+  <div class="card">
+    <div class="section-title">전부 성공 — 그레이스를 지목</div>
+    <div class="body-text">
+      <p class="narration">회의실 문이 닫히자 소리가 뚝 끊긴다. 그레이스는 이미 각오한 얼굴이다. 대표가 자신을 문제의 인물로 의심했다는 걸, 눈빛으로 알고 있었다. 그래도 도망치지 않았다. 도망칠 이유가 없었다.</p>
+      <p><span class="speaker donald">도날드:</span> 그레이스, 먼저 한 가지 말해야겠습니다. 저는 당신을 꽤 오랫동안 오해하고 있었습니다. 보고 라인에서 반복되는 오류, 프로젝트 일정 지연, 데이터 누락. 저는 그 모든 문제의 원인이 당신의 경험 부족이라고 생각했습니다. 누군가 그렇게 보고했고, 저는 그 말을 믿었습니다.</p>
+      <p><span class="speaker grace">그레이스:</span> …그렇게 생각하실 거라고 예상했습니다. 대표님뿐만 아니라 대부분이 그렇게 보고 있었으니까요.</p>
+      <p class="narration">그레이스의 목소리에는 원망도, 호소도 없었다. 그저 오래 삼켜온 사람의 목소리였다.</p>
+      <p><span class="speaker donald">도날드:</span> 이번 프로젝트를 다시 검토하면서 기록을 전부 확인했습니다. 수정 로그, 최초 기획자, 결재 전 단계에서 변경된 파일까지 전부요. 그걸 보면서 한 가지 사실을 알게 됐습니다. 문제의 대부분은 당신이 만든 것이 아니었습니다. 오히려 당신이 마지막 단계에서 계속 수습하고 있었더군요. 그런데도 당신은 단 한 번도 책임을 피하지 않았습니다.</p>
+      <p class="narration">그레이스는 아무 말도 하지 않았다.</p>
+      <p><span class="speaker donald">도날드:</span> 왜 말하지 않았습니까.</p>
+      <p><span class="speaker grace">그레이스:</span> …말해도 바뀌지 않을 것 같아서요. 그리고 솔직히, 증명할 자신도 없었습니다. 제가 맞다고 해도, 아무도 믿어주지 않을 것 같았으니까요.</p>
+      <p class="narration">도날드는 한동안 그 말을 그대로 두었다. 서둘러 덮지 않았다.</p>
+      <p><span class="speaker donald">도날드:</span> 당신이 없었다면 이번 프로젝트는 절대 여기까지 오지 못했을 겁니다. 그건 제가 확인한, 분명한 사실입니다.</p>
+      <p class="narration">그레이스의 눈에 처음으로 눈물이 맺혔다. 억울해서가 아니었다. 오래 혼자였던 사람이 처음으로 제대로 불린 것 같은, 인정 때문이었다.</p>
+      <p><span class="speaker donald">도날드:</span> 이제는 다르게 하겠습니다. 당신이 실제로 어떤 일을 해왔는지, 이제는 회사가 제대로 알아야 합니다. 다음 프로젝트는 당신 이름으로 시작합시다.</p>
+      <p class="narration">유리창 너머 도시의 불빛이 조용히 반짝였다. 옥탑방에서 시작된 작은 약속이, 오늘 처음으로 이 사람에게 닿는 순간이었다.</p>
+      <p class="narration">그것은 위로가 아니었다. 인정이었다.</p>
+    </div>
+    <div class="direction-box">9페이지의 &lt;전부 성공-엔딩&gt;을 낭독합니다.</div>
+    <button class="btn btn-gold" onclick="goTo('all_success_ending')">→ 전부 성공 엔딩으로 이동 (9p)</button>
+    <div class="pg-num">8</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 성공 — 엔딩 (p9~10)
+══════════════════════════════════════ -->
+<div id="all_success_ending" class="page">
+  <div class="card">
+    <div class="section-title">전부 성공 — 엔딩</div>
+    <div class="direction-box">아래의 글을 도날드가 낭독해주세요.</div>
+    <div class="body-text">
+      <p class="narration">그 후, 몇 달이 지났다. 강남의 밤이 유리창 너머로 조용히 번지고 있었다. 예전과 같은 사무실이었지만, 공기의 밀도는 완전히 달라졌다.</p>
+      <p class="narration">한때 이곳은 침묵으로 가득했다. 회의실에서는 서로의 눈을 피했고, 복도에서는 발걸음 소리조차 조심스러웠다. 누가 떠나게 될지, 누가 책임을 뒤집어쓸지, 우리 모두가 마음속으로 계산하고 있던 밤이 있었다. 나도 그랬다. 하지만 결국 아무도 떠나지 않았다.</p>
+      <p class="narration">그 밤 이후, 블랙코퍼레이션은 조금씩 달라지기 시작했다. 회의는 짧아졌고, 문제는 더 빨리 드러났으며, 우리는 서로의 말을 끝까지 듣기 시작했다.</p>
+      <p class="narration">설리번이 수치를 짚으면 캐서린이 구조를 바꿨고, 그레이스가 디테일을 수정했다. 마이클은 영업 쪽으로 역할을 바꿨다. 이전과 달리 성과가 보였고, 동료들로부터 인정도 받았다. 누군가의 실수가 더 이상 약점이 되지 않았다. 해결 방법을 아는 사람이 문제를 이어받고, 남은 사람은 묵묵히 서포트했다. 그렇게 프로젝트 하나가 완성됐다.</p>
+      <p class="narration">시간이 지난 어느 날, 사무실 한쪽에서 작은 환호가 터졌다.</p>
+      <p class="narration">그레이스가 모니터를 가리키며 소리쳤고, 화면에는 누구도 예상하지 못했던 숫자가 떠 있었다. 실시간 트렌드 1위. 캐서린은 팔짱을 낀 채 화면을 바라보며 옅게 미소를 지었고, 설리번은 말없이 조회수 곡선을 확인했다. 그래프는 가파르게 위를 향하고 있었다. 나는 그 화면을 한동안 바라봤다.</p>
+      <p class="narration">몇 달 전, 같은 자리에서 회사의 마지막을 생각하고 있었던 내가.</p>
+      <p class="narration">밤이 깊어갔다. 사람들은 다시 자리에 앉아 일을 이어갔다. 나는 창가에 서서 그 모습을 오래 바라봤다.</p>
+      <p class="narration">몇 달 전, 나는 회사를 살리기 위해서는 결국 누군가를 내보내야 한다고 생각했다. 누군가를 잘라내는 것이 대표의 역할이라고 믿었다.</p>
+      <p class="narration">하지만 프로젝트가 진행되는 동안 수많은 마찰과 소음 속에서 나는 천천히 깨달았다. 서로 의심하고 부딪히면서도 모두가 마지막까지 자신의 자리를 지켰다는 것을.</p>
+      <p class="narration">회사를 살리는 일은 누군가를 버리는 것이 아니라, 남아 있는 사람들과 끝까지 책임을 지는 일이라는 것을.</p>
+      <p class="narration">도망치고 싶었던 순간도 있었다. 판단을 미루고 싶었던 순간도 있었다. 하지만 그때마다 이 회사를 붙잡고 있었던 건 결국 이곳에 남아 있는 사람들이었다.</p>
+      <p class="narration">지금 눈앞의 이 풍경도, 내가 만든 것이 아니라 동료들이 만들어준 결과였다.</p>
+      <p class="narration">나는 유리창에 비친 내 모습을 잠시 바라보다가, 천천히 사무실을 향해 돌아섰다. 모니터 불빛 사이에서 사람들이 조용히 자신의 일을 이어가고 있었다.</p>
+      <p><span class="emphasis">"…이번엔 제대로 해보자."</span></p>
+      <p class="narration">내 목소리는 작았지만, 전보다 훨씬 단단했다. 블랙코퍼레이션은 한 번 무너질 뻔했다. 그리고 그 경험 덕분에, 우리는 이전보다 훨씬 견고한 회사가 되어가고 있었다.</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <button class="btn" style="margin-top:24px;" onclick="goTo('commentary')">코멘터리 읽기</button>
+    <button class="btn" style="margin-top:8px;" onclick="restartGame()">처음으로 돌아가기</button>
+    <div class="pg-num">9–10</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     2개 성공 (p11)
+══════════════════════════════════════ -->
+<div id="two_success" class="page">
+  <div class="card">
+    <div class="section-title">2개 성공</div>
+    <div class="body-text">
+      <p class="narration">프로젝트 결과 화면이 꺼진다. 회의실은 고요하다.</p>
+      <p class="narration">세 번 중 한 번의 실패. 숫자는 냉정했고, 감정은 잠시 멈춰 있었다.</p>
+      <p class="narration">투자자는 추가 투자를 승인했다. 그러나 기대에 못 미친 성과만큼, 금액은 줄어들었다.</p>
+      <p class="narration"><span class="joel">조엘</span>이 태블릿 화면을 넘기자, 줄어든 투자 금액, 조정된 현금 흐름표가 떠 있다. 살아남았지만, 오래 버틸 수 있는 상황은 아니었다. 도날드가 천천히 태블릿을 내려놓는다. 의자 다리가 바닥을 긁는 소리가 유난히 크게 들린다.</p>
+      <p><span class="speaker donald">도날드:</span> 우리는 기회를 얻었습니다. 다만… 지금의 비용 구조로는 이 기회를 오래 유지할 수 없습니다. 재무 구조를 조정하겠습니다.</p>
+      <p class="narration"><span class="sullivan">설리번</span>의 시선이 흔들림 없이 도날드를 향한다. <span class="grace">그레이스</span>는 고개를 숙인다. <span class="michael">마이클</span>은 입술을 굳게 다문다. <span class="catherine">캐서린</span>은 창밖을 바라본다. 그 말의 의미를 모르는 사람은 없었다.</p>
+      <p class="narration">한 사람. 딱 한 사람의 인건비만 줄여도 숨통은 조금 트인다.</p>
+      <p><span class="speaker joel">조엘:</span> 현재 인건비 비중을 1인 감축할 경우, 버틸 수 있는 기간은 두 배 가까이 늘어납니다.</p>
+      <p class="narration">공기가 서늘해진다. 서로를 바라보지 못한 채, 모두 계산을 시작한다.</p>
+      <p class="narration">도날드가 천천히 시선을 옮긴다. 그리고 한 사람에게 멈춘다.</p>
+      <p><span class="speaker donald">도날드:</span> 잠깐, 이야기 나눌 수 있겠습니까.</p>
+      <p class="narration">적막 속에서 의자가 밀리는 소리가 난다. 누군가 일어나 도날드의 대표실로 들어간다. 문이 닫히는 소리가 날카롭다. 회의실 안에는 남은 사람들의 숨소리만 맴돈다.</p>
+    </div>
+    <div class="direction-box">
+      <strong>도날드가 지목한 구조조정 대상자에 따라 해당 버튼을 눌러주세요.</strong>
+    </div>
+    <div class="choice-group">
+      <button class="btn" onclick="selectRestructure('sullivan')"><b class="sullivan">설리번</b>을 지목 → 14페이지</button>
+      <button class="btn" onclick="selectRestructure('joel')"><b class="joel">조엘</b>을 지목 → 15페이지</button>
+      <button class="btn" onclick="selectRestructure('michael')"><b class="michael">마이클</b>을 지목 → 18페이지</button>
+      <button class="btn" onclick="selectRestructure('catherine')"><b class="catherine">캐서린</b>을 지목 → 16페이지</button>
+      <button class="btn" onclick="selectRestructure('grace')"><b class="grace">그레이스</b>를 지목 → 17페이지</button>
+    </div>
+    <div class="pg-num">11</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     1개 성공 (p12)
+══════════════════════════════════════ -->
+<div id="one_success" class="page">
+  <div class="card">
+    <div class="section-title">1개 성공</div>
+    <div class="body-text">
+      <p class="narration">회의실 불이 절반만 켜져 있다. 모니터 화면에 결과는 아직 뜨지 않았지만, 이미 모두가 알고 있었다. 좋지 않을 거라는 걸. <span class="joel">조엘</span>이 짧게 숨을 들이쉬고 결과를 확인한다.</p>
+      <p><span class="speaker joel">조엘:</span> 최종 집계 확정입니다. 실패 프로젝트, 두 건.</p>
+      <p class="narration">그 말이 공기 속에 떨어진다. 아무도 받아내지 않는다. <span class="donald">도날드</span>는 한동안 모니터를 바라봤다. 눈을 떼지 못했다. 숫자는 변하지 않았다. 변할 리 없었다.</p>
+      <p class="narration">그가 천천히 자리에서 일어섰다. 의자 다리가 바닥을 긁는 소리가 유난히 크게 울렸다.</p>
+      <p><span class="speaker donald">도날드:</span> 구조조정을 단행합니다. 두 명입니다. 개인 감정은 배제합니다. 지금은 생존입니다.</p>
+      <p><span class="speaker michael">마이클:</span> …다른 방법은 없습니까.</p>
+      <p><span class="speaker donald">도날드:</span> 없습니다.</p>
+      <p class="narration">짧고, 단정적인 대답이었다. 더 이상의 말은 없었다. 공기가 한층 무거워졌다.</p>
+      <p class="narration"><span class="donald">도날드</span>가 시선을 천천히 돌렸다. 한 사람씩. 얼굴을 확인하듯.</p>
+      <p><span class="speaker donald">도날드:</span> 이름을 부르겠습니다.</p>
+      <p class="narration">그 짧은 문장 하나가 방 안의 시간을 멈췄다. 어딘가에서 의자가 아주 미세하게 삐걱였다. 누군가는 시선을 떨궜고, 누군가는 굳은 채 정면을 바라봤다. 숨소리조차 들리지 않았다.</p>
+      <p class="narration">그리고 두 개의 이름이 불렸다.</p>
+      <p class="narration">누군가는 눈을 감았다. 누군가는 아무 표정도 짓지 못한 채 그대로 서 있었다. 나머지는 말이 없었다. 시선을 어디에 두어야 할지 모르는 얼굴들이었다.</p>
+      <p><span class="speaker donald">도날드:</span> 두 분은 차례대로 제 집무실로 들어와 주시기 바랍니다.</p>
+      <p class="narration">이름이 불린 사람들이 조용히 자리에서 일어섰다. 발소리가 유난히 또렷하게 들렸다. 문이 닫혔다. 남은 사람들은 한동안 아무 말도 하지 않았다. 모니터 화면만이 차갑게 빛나고 있었다.</p>
+    </div>
+    <div class="direction-box" id="one_success_nav">
+      <strong>도날드가 지목한 구조조정 대상자를 순서대로 선택해주세요.</strong><br>
+      1순위, 2순위를 차례대로 낭독한 후 이동합니다.
+    </div>
+    <div class="choice-group" id="one_success_btns">
+      <!-- renderPageNav()가 채움 -->
+    </div>
+    <div class="pg-num">12</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     전부 실패 (p13)
+══════════════════════════════════════ -->
+<div id="all_fail" class="page">
+  <div class="card">
+    <div class="section-title">전부 실패</div>
+    <div class="body-text">
+      <p class="narration">회의실 모니터가 켜진다. <span style="font-weight:600; color:#333;">[ A — 실패. / B — 실패. / C — 실패 ]</span></p>
+      <p><span class="speaker joel">조엘:</span> 투자 철회 통보입니다. 회수 절차가 곧 시작됩니다.</p>
+      <p class="narration"><span class="donald">도날드</span>는 한동안 말이 없다. 손가락이 테이블을 천천히 두드린다.</p>
+      <p><span class="speaker donald">도날드:</span> 아직… 며칠은 있습니다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 무슨 의미죠.</p>
+      <p><span class="speaker donald">도날드:</span> 인건비 비율을 즉시 조정합니다. 두 명 정리하면 한 달은 버틸 수 있습니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 한 달을 위해 사람을 자른다고요?</p>
+      <p><span class="speaker donald">도날드:</span> 한 달이면 반전할 기회가 생깁니다.</p>
+      <p><span class="speaker joel">조엘:</span> …그래서, 누구를 자를 생각이죠?</p>
+      <p><span class="speaker donald">도날드:</span> 감정은 배제합니다. 지금은 생존입니다. 오늘 중으로 두 명 면담합니다.</p>
+      <p><span class="speaker michael">마이클:</span> 맞습니다. 버텨야 합니다.</p>
+      <p><span class="speaker grace">그레이스:</span> …이게 회사를 살리는 건가요…?</p>
+      <p class="narration"><span class="donald">도날드</span>는 문 쪽으로 걸어간다. 잠시 멈추더니, 돌아보지 않은 채 말한다.</p>
+      <p><span class="speaker donald">도날드:</span> 두 분은… 지금 바로 대표실로 와주십시오.</p>
+      <p class="narration">모두가 <span class="donald">도날드</span>가 지목한 그들을, 말없이 바라보다 시선을 돌린다. 그들은 <span class="donald">도날드</span>의 대표실로 들어가고, 남은 사람들의 숨소리만 회의실에 남는다.</p>
+    </div>
+    <div class="direction-box" id="all_fail_nav">
+      <strong>도날드가 지목한 구조조정 대상자를 순서대로 선택해주세요.</strong><br>
+      1순위, 2순위를 차례대로 낭독한 후 비밀 감사로 이동합니다.
+    </div>
+    <div class="choice-group" id="all_fail_btns">
+      <!-- renderPageNav()가 채움 -->
+    </div>
+    <div class="pg-num">13</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     구조조정 — 설리번 지목 (p14)
+══════════════════════════════════════ -->
+<div id="restr_sullivan" class="page">
+  <div class="card">
+    <div class="section-title">구조조정 대상자 — 설리번</div>
+    <div class="body-text">
+      <p class="narration">면담실 문이 닫힌다. 회의실의 웅성임이 완전히 차단된다. 작은 테이블 하나를 사이에 두고 <span class="donald">도날드</span>와 <span class="sullivan">설리번</span>이 마주 앉는다. <span class="sullivan">설리번</span>은 허리를 곧게 세운 채, 무표정으로 앉아 있다.</p>
+      <p class="narration"><span class="donald">도날드</span>가 먼저 입을 연다.</p>
+      <p><span class="speaker donald">도날드:</span> 아시다시피, 이번 구조조정은 감정의 문제가 아닙니다. 재무 구조의 문제입니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 그래서 제가 선택된 겁니까.</p>
+      <p><span class="speaker donald">도날드:</span> 현재 연봉, 직책, 그리고 대체 가능성. 숫자로만 보면… 가장 합리적인 선택입니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 이번 세 프로젝트의 리스크 관리, 투자 설득 자료, 자금 재배치… 전부 제가 설계했습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 알고 있습니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 투자 유치 당시, 지표를 부풀리자고 말씀하신 것도 대표님이었습니다. 저는 그걸 정리했고, 책임을 나눠 가졌습니다. 저는 회사를 지키기 위해 공범이 됐습니다. 이제는 회사가 저를 정리하는군요.</p>
+      <p><span class="speaker donald">도날드:</span> …그래서 더 오래 고민했습니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> …옥탑방에서 투자 제안서 만들던 밤, 대표님이 무너질 때마다 버틸 수 있게 한 건 저였습니다.</p>
+      <p class="narration"><span class="donald">도날드</span>는 아무 말도 하지 못한다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 알겠습니다. 권고사직, 받아들이겠습니다. 다만 한 가지는 분명히 하죠. 블랙코퍼레이션의 성공 신화 절반은 제 전략이었습니다. 회사는 살아남겠죠. 하지만 대표님, 오늘 이후로는 혼자 버티셔야 합니다.</p>
+      <p class="narration">문이 열린다. <span class="sullivan">설리번</span>은 뒤돌아보지 않는다. 면담실에 혼자 남은 <span class="donald">도날드</span>는 아무 말 없이 테이블 위를 바라본다. 밖에서는 도시의 불빛이 여전히 반짝인다.</p>
+    </div>
+    <div class="direction-box" id="restr_sullivan_nav"></div>
+    <div id="restr_sullivan_btns"></div>
+    <div class="pg-num">14</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     구조조정 — 조엘 지목 (p15)
+══════════════════════════════════════ -->
+<div id="restr_joel" class="page">
+  <div class="card">
+    <div class="section-title">구조조정 대상자 — 조엘</div>
+    <div class="body-text">
+      <p class="narration">면담실 문이 닫힌다.</p>
+      <p><span class="speaker donald">도날드:</span> 이번 구조조정 대상은 조엘님입니다.</p>
+      <p><span class="speaker joel">조엘:</span> 네. 그럴 줄 알았습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 이번 프로젝트에서 조엘님이 계속 실패 이후를 계산하는 것이 느껴졌습니다. 조엘님은 조직을 불안하게 만들었습니다.</p>
+      <p><span class="speaker joel">조엘:</span> 저는 가능성을 계산했을 뿐입니다. 불안은 대표님 정서가 반영된 것이고요.</p>
+      <p><span class="speaker donald">도날드:</span> 우리 조직엔 당신 같은 수동적인 태도가 맞지 않습니다.</p>
+      <p><span class="speaker joel">조엘:</span> 결과와 효율보다 태도를 중요하게 여기시는군요. 저 역시 이곳과는 맞지 않는 것 같습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 당신은 회사에 남고 싶지 않았던 겁니까.</p>
+      <p><span class="speaker joel">조엘:</span> 커리어는 자산입니다. 하락 구간에 오래 머무르는 건 좋은 전략이 아닙니다. 절차대로 권고사직 진행해 주세요.</p>
+      <p class="narration"><span class="donald">도날드</span>의 눈이 미묘하게 흔들린다.</p>
+      <p><span class="speaker joel">조엘:</span> 대표님. 리스크는 제거하는 게 아니라 관리하는 겁니다. 대책 없이 제거하면… 언젠가 통제 불가능한 형태로 돌아옵니다.</p>
+      <p class="narration"><span class="joel">조엘</span>이 자리에서 일어난다.</p>
+      <p><span class="speaker joel">조엘:</span> 그동안 수고하셨습니다.</p>
+      <p class="narration">문이 열린다. 그의 발걸음은 가볍다. 책상 위에 남은 건 정확한 숫자와, 곧 현실이 될 예측뿐이다. 면담실에 혼자 남은 <span class="donald">도날드</span>는 잠시 아무 말도 하지 못한다.</p>
+    </div>
+    <div class="direction-box" id="restr_joel_nav"></div>
+    <div id="restr_joel_btns"></div>
+    <div class="pg-num">15</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     구조조정 — 캐서린 지목 (p16)
+══════════════════════════════════════ -->
+<div id="restr_catherine" class="page">
+  <div class="card">
+    <div class="section-title">구조조정 대상자 — 캐서린</div>
+    <div class="body-text">
+      <p class="narration">면담실 문이 닫힌다. <span class="donald">도날드</span>는 서류를 내려놓는다.</p>
+      <p><span class="speaker donald">도날드:</span> 이번 구조조정 대상은… 캐서린 PD입니다.</p>
+      <p class="narration"><span class="catherine">캐서린</span>은 놀라지 않고, 천천히 다리를 꼬고 앉는다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 이유는요.</p>
+      <p><span class="speaker donald">도날드:</span> 최근 프로젝트 관여도 저하, 업무 몰입도 부족, 팀 사기 저하. 캐서린 PD님의 과거 기여 때문에 눈감았었지만, 더 이상 예외를 둘 수 없습니다. 권고사직 처리하겠습니다.</p>
+      <p class="narration"><span class="catherine">캐서린</span>은 미소를 지으며 고개를 끄덕인다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 절차대로 진행해 주세요.</p>
+      <p><span class="speaker donald">도날드:</span> 담담하시군요.</p>
+      <p><span class="speaker catherine">캐서린:</span> 감정으로 결정된 건 아니지 않습니까. 저도 감정으로 반응하진 않겠습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 공백이 클 겁니다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 구조가 단단하다면 문제 없겠죠. 대표님이 선택하신 방향이니까요.</p>
+      <p><span class="speaker donald">도날드:</span> 불만은 없습니까?</p>
+      <p><span class="speaker catherine">캐서린:</span> 없습니다. 회사가 판단한 '최적의 선택'이겠죠. 다만… 성과는 결국 구조가 만듭니다.</p>
+      <p class="narration"><span class="donald">도날드</span>는 아무 말이 없고, <span class="catherine">캐서린</span>이 자리에서 일어난다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 정리 일정 알려주시면 맞추겠습니다.</p>
+      <p class="narration">문이 열리기 직전, 잠시 멈추더니 냉소적인 미소를 지으며 말한다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 대표님. 이번 선택이 옳았다는 걸, 꼭 증명해 보이시죠.</p>
+      <p class="narration">문이 닫힌다.</p>
+    </div>
+    <div class="direction-box" id="restr_catherine_nav"></div>
+    <div id="restr_catherine_btns"></div>
+    <div class="pg-num">16</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     구조조정 — 그레이스 지목 (p17)
+══════════════════════════════════════ -->
+<div id="restr_grace" class="page">
+  <div class="card">
+    <div class="section-title">구조조정 대상자 — 그레이스</div>
+    <div class="body-text">
+      <p class="narration">면담실 문이 닫힌다. <span class="grace">그레이스</span>는 이미 결과를 알고 있다는 얼굴이다.</p>
+      <p><span class="speaker donald">도날드:</span> 이번 프로젝트의 실패 원인을 정리했습니다. 그리고 저는… 당신을 무능한 인력으로 판단했습니다.</p>
+      <p><span class="speaker grace">그레이스:</span> 어떤 근거입니까.</p>
+      <p><span class="speaker donald">도날드:</span> 반복되는 일정 지연, 데이터 누락, 보고 체계 혼선. 전부 당신 이름으로 올라와 있습니다.</p>
+      <p><span class="speaker grace">그레이스:</span> …그 보고 라인은 제 이름으로 올라갔지만, 최종 승인자는 마이클 PD입니다.</p>
+      <p><span class="speaker donald">도날드:</span> 실무자가 져야 할 책임도 있는 겁니다.</p>
+      <p><span class="speaker grace">그레이스:</span> 결과에 따른 선택적 책임 전가 아닙니까?</p>
+      <p class="narration"><span class="donald">도날드</span>의 눈썹이 아주 미세하게 움직인다.</p>
+      <p><span class="speaker grace">그레이스:</span> 제 기획안은 두 번 수정 없이 통과됐습니다. 하지만 회의에서는 항상 "마이클 PD의 통찰"로 보고됐습니다. 아니요. 성과는 마이클의 몫이고, 실패는 항상 제 몫이 되었습니다. 말씀하신 구조조정의 근거는 마이클 PD의 승인 지연 때문이었습니다. 메일 기록도 있습니다. 저는 무능한 인력이 아닙니다. 사내 정치의 희생양입니다…!</p>
+      <p><span class="speaker donald">도날드:</span> 끝까지 변명뿐이군요.</p>
+      <p><span class="speaker grace">그레이스:</span> 저는 제 이름으로 한 번도 평가받은 적이 없습니다. 항상 마이클의 뒤에 가려져 있었습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 하실 말씀은 그게 전부인가요? 판단은 바뀌지 않습니다.</p>
+      <p class="narration"><span class="grace">그레이스</span>는 체념한 듯 고개를 끄덕인다. 그녀가 자리에서 일어난다. 문이 열리기 직전, 잠시 멈춘다.</p>
+      <p><span class="speaker grace">그레이스:</span> …대표님, 가장 시끄럽게 충성하는 사람이 항상 가장 유능한 건 아닙니다.</p>
+      <p class="narration">문이 닫힌다. 회의실로 돌아가는 그녀의 걸음은 흔들리지 않는다. 오늘, 무능이라는 꼬리표는 가장 능력 있는 사람의 등에 붙어 있었다.</p>
+    </div>
+    <div class="direction-box" id="restr_grace_nav"></div>
+    <div id="restr_grace_btns"></div>
+    <div class="pg-num">17</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     구조조정 — 마이클 지목 (p18~19)
+══════════════════════════════════════ -->
+<div id="restr_michael" class="page">
+  <div class="card">
+    <div class="section-title">구조조정 대상자 — 마이클</div>
+    <div class="body-text">
+      <p class="narration">면담실 문이 닫힌다. <span class="michael">마이클</span>은 여전히 웃는 얼굴이다.</p>
+      <p><span class="speaker michael">마이클:</span> 설마 저를 부르신 건 아니겠죠. 저는 이번에 나쁘지 않았습니다. 대표님도 아시잖아요, 제가 얼마나 했는지.</p>
+      <p class="narration"><span class="donald">도날드</span>는 서류를 책상 위에 내려놓는다. 수정 이력, 일정 지연표, 재작업 비율.</p>
+      <p><span class="speaker donald">도날드:</span> 이번 세 프로젝트의 로그입니다. 앉아서 보시죠.</p>
+      <p><span class="speaker michael">마이클:</span> 팀원들이 미숙해서 생긴 문제들이고, 저는 그걸 수습하느라—</p>
+      <p><span class="speaker donald">도날드:</span> 아닙니다. 최초 방향 변경 요청, 무리한 일정 압박, 예산 재배치. 전부 당신 지시입니다. 수습한 게 아니라, 당신이 만든 문제들입니다.</p>
+      <p class="narration"><span class="michael">마이클</span>의 표정이 굳는다.</p>
+      <p><span class="speaker michael">마이클:</span> …그건 말이 안 됩니다. 제가 여태까지 얼마나 헌신했는지 아십니까. 밤새 불 켜놓고, 누구보다 늦게까지 자리 지키고—</p>
+      <p><span class="speaker donald">도날드:</span> 불을 켜놓는 것과 일을 하는 건 다릅니다. 당신이 늦게까지 남아 있는 동안, 실제로 일하고 있던 건 그레이스였습니다.</p>
+      <p><span class="speaker michael">마이클:</span> 그건 제가 지도한 겁니다! 교육의 결과물이고—</p>
+      <p><span class="speaker donald">도날드:</span> 아닙니다. 기록입니다. 최초 기획서 작성자, 수정 이력, 파일 생성 시각. 전부 그레이스입니다. 당신이 한 건 이름을 바꿔 올린 것뿐입니다.</p>
+      <p><span class="speaker michael">마이클:</span> 신입의 결과물을 그대로 올릴 순 없잖습니까. 책임은 제가 진 겁니다.</p>
+      <p><span class="speaker donald">도날드:</span> 책임을 진 게 아니라, 공로를 가져간 겁니다. 그리고 그 아이한테는 "경험이 없어서 보호하려는 것"이라고 했죠. 그 말, 그대로 보고가 들어왔습니다.</p>
+      <p class="narration"><span class="michael">마이클</span>의 입이 잠시 굳는다.</p>
+      <p><span class="speaker michael">마이클:</span> …대표님, 지금 이건 너무 가혹하십니다. 저는 이 회사가 아무것도 없을 때부터 함께했습니다. 옥탑방부터, 강남 이사까지, 단 한 번도 이탈하지 않았습니다.</p>
+      <p><span class="speaker donald">도날드:</span> 이탈하지 않을 이유가 있었으니까요. 이 회사 말고는 갈 곳이 없었던 거 아닙니까.</p>
+      <p class="narration">그 말이 직격처럼 꽂힌다. <span class="michael">마이클</span>의 얼굴에서 웃음이 완전히 사라진다.</p>
+      <hr class="divider">
+      <p><span class="speaker donald">도날드:</span> 이번 구조조정 대상은 당신입니다.</p>
+      <p><span class="speaker michael">마이클:</span> 잠깐만요. 제가 나가면 공백이—</p>
+      <p><span class="speaker donald">도날드:</span> 이미 당신 없이 돌아가도록 정리해두었습니다. 사실, 정리할 것도 많지 않더군요.</p>
+      <p><span class="speaker michael">마이클:</span> 이건 말이 안 됩니다! 제가 여기서 한 게 얼만데, 이렇게 끝냅니까! 누군가 저를 밀어낸 겁니다. 설리번입니까? 조엘입니까? 캐서린입니까?! 설마 그레이스가… 다 짜고 친 거죠?!</p>
+      <p><span class="speaker donald">도날드:</span> 끝났습니다, 마이클.</p>
+      <p class="narration">소란에 문 밖에서 노크 소리가 들린다.</p>
+      <p><span class="speaker donald">도날드:</span> 들어오세요.</p>
+      <p><span class="speaker michael">마이클:</span> 손 대지 마! 내가 나가면 된다고! 이 회사 내가 키운 거야! 당신은 아무것도 아니었어, 내가 없었으면 여기까지 못 왔다고!</p>
+      <p><span class="speaker donald">도날드:</span> 알고 있습니다. 그래서 고맙게 생각합니다. 하지만 그게 오늘의 결정을 바꾸지는 않습니다.</p>
+      <p><span class="speaker michael">마이클:</span> 후회할 겁니다! 다 망할 거야! 내가 폭로할 거라고!</p>
+      <p class="narration"><span class="michael">마이클</span>은 발버둥 치며 복도로 끌려 나간다. 서류가 바닥에 흩어지고, 의자가 넘어간다. 문이 닫히기 직전까지 소리가 이어지다가, 문이 닫힌다.</p>
+      <p class="narration"><span class="donald">도날드</span>는 한동안 그 자리에 서 있었다. 바닥에 흩어진 서류를 천천히 내려다봤다. 5년이었다. 그 5년의 끝이 이 소리였다. 그는 조용히 몸을 숙여 서류를 집어 들었다.</p>
+    </div>
+    <div class="direction-box" id="restr_michael_nav"></div>
+    <div id="restr_michael_btns"></div>
+    <div class="pg-num">18–19</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     그 후 블랙코퍼레이션 (A) — p20~21
+══════════════════════════════════════ -->
+<div id="aftermath_a" class="page">
+  <div class="card">
+    <div class="section-title">그 후 블랙코퍼레이션 (A)</div>
+    <div class="direction-box">아래의 글을 <b class="donald">도날드</b>가 읽어주세요.<br>구조조정된 인물의 단락은 건너뛰고 읽어주세요.</div>
+    <div class="body-text">
+      <p class="narration">결국, 사람이 떠났다. 회사는 겉으로는 더 단단해 보였다. 줄어든 인건비 덕에 현금 흐름은 잠시 안정됐다. <span class="donald">도날드</span>는 인터뷰에서 위기를 넘긴 스타트업의 대표를 연기하며 미소를 지었다.</p>
+      <p class="narration">하지만 균열은 조용히 번졌다.</p>
+
+      <div class="aftermath-section" data-char="sullivan">
+        <p class="narration"><span class="emphasis">&lt;어느 날, 설리번이 이직을 알렸다.&gt;</span></p>
+        <p class="narration">그녀는 더 좋은 조건의 직장을 찾았고, 빠르게 이직을 알렸다. <span class="donald">도날드</span>는 그녀를 붙잡았지만, <span class="sullivan">설리번</span>의 눈에는 예전 같은 낭만이 남아 있지 않았다. 한때는 이 조직을 위해 쓰던 그 명석함을 오로지 자신의 미래를 위해 쓰기로 결정한 얼굴이었다. 그녀는 뒤돌아보지 않았다. 그날 이후 보고는 늦어지고, 수정은 쌓이고, 책임은 흐려졌다. 설계자가 사라진 조직은 방향을 잃기 시작했다.</p>
+      </div>
+
+      <div class="aftermath-section" data-char="catherine">
+        <p class="narration"><span class="emphasis">&lt;캐서린이 떠났다.&gt;</span></p>
+        <p class="narration">퇴사 메일은 짧았다. 새로운 도전을 하겠다는 한 줄뿐이었다. <span class="donald">도날드</span>와 <span class="michael">마이클</span>은 형식적으로 한 번 붙잡았지만, 더 말을 이어가진 않았다. 불편한 긴장 속에서 함께 일해온 시간이 길었다. 이미 마음이 떠난 사람을 붙잡을 명분도, 이유도 없었다. 핵심 인물이 빠지는 공백은 분명 컸지만, 이상하게도 회의실 공기는 조금 가벼워졌다. 몇 달 뒤, 업계에 새로운 스튜디오 이름이 돌기 시작했다. 설립자는 <span class="catherine">캐서린</span>. 투자 유치 속도도, 콘텐츠 완성도도 달랐다. 사람들은 말했다. 감각 있는 리더가 중심을 잡은 팀이라고.</p>
+      </div>
+
+      <div class="aftermath-section" data-char="grace">
+        <p class="narration"><span class="emphasis">&lt;그레이스도 퇴사 소식을 알렸다.&gt;</span></p>
+        <p class="narration"><span class="catherine">캐서린</span>이 없는 블랙코퍼에서, 오히려 갈 길을 정했다는 듯 초연해진 태도로 근무하던 그녀였다. 조용하게 퇴사를 알렸다. 큰 말도, 긴 인사도 남기지 않았다. 늘 눈치를 보며 일하던 신입이었지만, 마지막 날 그녀의 표정은 이상하리만큼 편안했다. 회사를 나간 <span class="grace">그레이스</span>는 <span class="catherine">캐서린</span>과 합류했다. 그녀는 그곳에서 처음으로 마음껏 실력을 펼치기 시작했다. 기획은 날카로웠고 실행은 빨랐다. 1년이 채 지나지 않아 두 사람이 만든 회사의 매출은 블랙코퍼레이션을 넘어섰다. 그제야 사람들은 깨달았다. 그레이스는 부족했던 사람이 아니라, 이곳이 날개를 펼칠 수 없었던 곳이라는 것을.</p>
+      </div>
+
+      <div class="aftermath-section" data-char="joel">
+        <p class="narration"><span class="emphasis">&lt;조엘은 한동안 남아 있었다.&gt;</span></p>
+        <p class="narration">숫자를 정리하고, 잔여 계약을 마무리하고, 더 이상 정리할 숫자가 없다는 걸 확인한 뒤 아무 말 없이 퇴사했다.</p>
+      </div>
+
+      <hr class="divider">
+      <p class="narration">결국 사무실에는 <span class="donald">도날드</span>와 <span class="michael">마이클</span> 두 사람만 남았다.</p>
+      <p class="narration">사무실은 예전보다 훨씬 넓어 보였다. 불이 켜진 자리도 몇 개 되지 않았고, 회의실 문은 대부분 닫혀 있었다. 그래도 회사는 여전히 돌아가는 척하고 있었다.</p>
+      <p class="narration">두 사람은 거의 매일 같은 자리에 마주 앉았다. 화면 위에는 여전히 부진한 숫자들이 떠 있었다. 하지만 두 사람의 시선은 오래가지 않았다. 대신 꺼내는 건 항상 떠난 사람들의 이야기였다.</p>
+      <hr class="divider">
+      <p class="narration"><span class="sullivan">설리번</span>이 만들어놓은 체계가 엉망이라 지금도 수습 중이고, <span class="catherine">캐서린</span>이 진행하다 내팽개친 프로젝트 때문에 외주사와 관계가 틀어졌으며, <span class="grace">그레이스</span>가 남긴 미완성 파일들은 아직도 정리가 안 됐고, <span class="joel">조엘</span>이 어중간하게 마무리한 계약 건은 지금도 발목을 잡고 있었다.</p>
+      <p class="narration">두 사람은 그 목록을 꺼낼 때마다 고개를 절레절레 저었다. 그 제대로 하고 나갔더라면, 지금쯤은 달랐을 거라고. 이렇게 뒷수습에 에너지를 쏟지 않아도 됐을 거라고.</p>
+      <p class="narration">이런 이야기를 나눠야 두 사람의 마음은 묘하게 편안해졌다. 숫자가 안 나오는 건 우리 탓이 아니었다. 남겨진 짐이 너무 많았던 것이다. 끝까지 자리를 지킨 사람은 결국 우리 둘뿐이었고, 그것만으로도 이미 충분히 대단한 일이었다. 하지만 화면 속 숫자는 아무것도 달라지지 않았다.</p>
+      <p class="narration">회사는 겨우 명줄만 이어가고 있었다. 작은 계약 하나로 몇 달을 버티고, 또 다른 프로젝트로 시간을 미루는 식이었다. 버티는 힘도 점점 약해졌고, 어느 순간부터는 버티고 있다는 사실조차 희미해졌다.</p>
+      <p class="narration">어느 날, 몇 년 뒤, 업계 기사 한 줄이 떴다.</p>
+      <p class="emphasis">"단 두 사람이 이뤄낸 기적 같은 성과."</p>
+      <p class="narration">사진 속에는 밝은 얼굴로 함께 서있는 <span class="catherine">캐서린</span>과 <span class="grace">그레이스</span>가 있었다. 두 사람이 세운 신생 기업이 대규모 M&A에 성공했다는 기사였다. 두 사람은 환하게 웃고 있었다.</p>
+      <p class="narration">그리고 같은 화면 아래, 또 다른 기사 한 줄.</p>
+      <p class="emphasis">전 블랙코퍼레이션 대표, 경영 실패 책임 공방 중.</p>
+    </div>
+    <button class="btn btn-gold" style="margin-top:28px;" onclick="goTo('aftermath_b')">→ 그 후 블랙코퍼레이션 (B)로 이동 (22p)</button>
+    <div class="pg-num">20–21</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     그 후 블랙코퍼레이션 (B) — p22
+══════════════════════════════════════ -->
+<div id="aftermath_b" class="page">
+  <div class="card">
+    <div class="section-title">그 후 블랙코퍼레이션 (B)</div>
+    <div class="body-text">
+      <p class="narration">몇 달 뒤, 사무실 한 켠이 비어 있었다. <span class="michael">마이클</span>의 이름이 붙어 있던 자리였다.</p>
+      <p class="narration">회의는 짧아졌다. 결정은 빠르게 내려졌다. 수정 요청은 줄었고, 일정은 처음 계획대로 흘러가기 시작했다. <span class="donald">도날드</span>는 오랜만에 숨을 고를 수 있었다. 이제야 제대로 돌아간다고 생각했다.</p>
+      <p class="narration">하지만 빈자리는 마이클만이 아니었다.</p>
+      <p class="narration">구조조정이 끝난 뒤, 몇몇이 조용히 짐을 쌌다. 어쩌면 그들은 이미 오래전부터 나갈 준비를 하고 있었을 것이다. 구조조정은 그 타이밍을 앞당겼을 뿐이었다. <span class="donald">도날드</span>는 그것을 알고 있었다. 그래서 붙잡을 명분도, 자신도 없었다.</p>
+      <p class="narration">그러나 끝까지 남은 사람들이 있었다. 떠날 수도 있었지만 남은 사람들. <span class="donald">도날드</span>는 그 사실을 가볍게 여기지 않았다. 이 회사가 아직 가능성이 있다고 믿기 때문에 남은 것이라면, 그 믿음에 부응해야 한다는 책임감을 다시 선명하게 느꼈다.</p>
+      <p class="narration">몇 달 뒤, <span class="donald">도날드</span>의 책상 위에 업무 협업 제안서 하나가 올라왔다. 보낸 사람: <span class="catherine">캐서린</span> &amp; <span class="grace">그레이스</span>.</p>
+      <p class="narration"><span class="donald">도날드</span>는 한동안 그 이름들을 바라봤다. 한때 이 회사 안에 있던 사람들이었다. 내보낸 것이 아니라, 스스로 나간 사람들이. 그런데 지금, 외부에서 손을 내밀고 있었다. 그는 오래 들여다보다가 천천히 펜을 들었다.</p>
+      <p class="narration">계약서에 사인이 이루어졌다. 블랙코퍼레이션의 주요 프로젝트는 그들의 회사와 함께 진행되었다. 아이러니하게도 안에 있을 때보다 밖에 있을 때, 두 사람은 더 온전하게 자기 몫을 해냈다.</p>
+      <p class="narration">어두워진 창밖, 사무실에서 <span class="donald">도날드</span>는 계약서를 덮으며 남아 있는 사람들을 바라봤다. 각자의 자리에서 조용히 일을 이어가고 있었다. 사람을 자르는 게 능사는 아니었다. 정리해야 할 건 사람이 아니라 역할이었다. 그것을 깨닫는 데 너무 오래 걸렸다.</p>
+      <p class="narration">하지만 지금, 남은 사람들과 함께 다시 시작할 수 있었다.</p>
+      <p class="emphasis">그것으로 충분했다. 아직, 늦지 않았다.</p>
+    </div>
+    <div class="direction-box" id="aftermath_b_nav"><!-- renderPageNav가 채움 --></div>
+    <div class="choice-group" id="aftermath_b_btns"><!-- renderPageNav가 채움 --></div>
+    <div class="pg-num">22</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     퇴사한 설리번 (엔딩) — p23
+══════════════════════════════════════ -->
+<div id="exit_sullivan" class="page">
+  <div class="card">
+    <div class="section-title">퇴사한 설리번 (엔딩)</div>
+    <div class="body-text">
+      <p class="narration"><span class="sullivan">설리번</span>은 퇴직 처리일에 맞춰 노트북을 반납했다. 책상은 깔끔했다. 치울 것도 없었다. 처음부터 개인 물건을 많이 두지 않았다.</p>
+      <p class="narration">사무실을 마지막으로 한 번 둘러봤다. 5년이었다. 옥탑방의 먼지, 강남 입성의 흥분, 그리고 조금씩 무너져가던 날들. 그 모든 것이 이 공간 안에 있었다. <span class="sullivan">설리번</span>은 감상을 오래 두지 않았다. 엘리베이터 버튼을 눌렀다. 문이 닫혔다. 표정은 변하지 않았다.</p>
+      <p><span class="sullivan">설리번:</span> "먼저 갈게요. 캐서린."</p>
+      <p class="narration">며칠 뒤, <span class="sullivan">설리번</span>은 헤드헌터와 미팅을 했다. 카페 창가 자리. 상대는 이력서를 훑으며 운을 뗐다.</p>
+      <p><span class="speaker lawyer">헤드헌터:</span> 블랙코퍼레이션에서 전략을 총괄하셨죠? 이 시기 투자 유치 실적은… 상황이 좋지 않았을 텐데요.</p>
+      <p><span class="speaker sullivan">설리번:</span> 좋지 않았습니다. 그래서 더 정교하게 짰습니다.</p>
+      <p class="narration">이력서는 길지 않았다. 위기 대응, 자금 재배치, 투자 설득, 리스크 관리. 숫자로 증명된 것들만 적혀 있었다. 허황된 표현도, 과장된 수식어도 없었다. 헤드헌터는 한참을 들여다봤다.</p>
+      <p class="narration">몇 주 뒤, 대형 기업의 전략실에서 오퍼가 들어왔다. 조건은 이전보다 좋았다. 권한은 더 넓었다. 보고 라인은 단순했다. <span class="sullivan">설리번</span>은 계약서를 천천히 읽었다. 처음부터 끝까지. 그리고 사인했다.</p>
+      <p class="narration">새 회사에서의 하루는, 블랙코퍼레이션에서와는 달랐다. 보고는 명확했고, 회의는 필요한 만큼만 열렸으며, 그녀가 경고한 리스크는 실제로 검토되었다. 블랙코퍼레이션에서는 완벽한 보고서를 써도 결정은 다른 방향으로 났고, 구조를 설계해도 아무도 그것을 따르지 않았다. 유능함이 성과가 아니라 짐이 되는 곳이었다. 이곳은 달랐다. 그녀가 설계한 구조는 실제로 작동했고, 그 결과는 숫자로 돌아왔다.</p>
+      <p class="narration">블랙코퍼레이션이 조용히 무너졌다는 소식은 이미 알고 있었다. 놀랍지 않았다. 그녀는 한때 그 구조를 설계했고, 동시에 그 구조가 무너질 조건도 알고 있었다. 설계자가 자리를 떠난 건물이 오래 버티는 경우는 드물다.</p>
+      <p class="narration">창밖을 바라봤다. 도시의 불빛이 차갑게 번지고 있었다. 이번엔 지킬 수 있는 구조 안에서, 그녀는 일하고 있었다.</p>
+      <p class="narration">그리고 더 이상 누군가의 방패가 아니었다.</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <div id="exit_sullivan_next" style="margin-top:16px;"></div>
+    <div class="pg-num">23</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     퇴사한 조엘 (엔딩) — p24
+══════════════════════════════════════ -->
+<div id="exit_joel" class="page">
+  <div class="card">
+    <div class="section-title">퇴사한 조엘 (엔딩)</div>
+    <div class="body-text">
+      <p class="narration"><span class="joel">조엘</span>이 회사를 떠난 지 몇 달이 지났다. <span class="joel">조엘</span>은 작은 사무실 창가에 앉아 있었다. 큰 간판도 없는 공간이었다. 책상 하나, 노트북 하나, 그리고 커피잔 하나. 그에게는 그 정도면 충분했다.</p>
+      <p class="narration">요즘 그는 여러 회사의 조직 구조와 재무 흐름을 분석하는 일을 하고 있었다. 망가진 조직을 보고, 어디서 균열이 시작됐는지 찾아내고, 어떻게 다시 세울 수 있을지 계산하는 일. <span class="joel">조엘</span>은 그런 일을 잘했다.</p>
+      <p class="narration">어느 날 저녁, 메일 하나가 도착했다. 보낸 사람: <span class="catherine">캐서린</span> / 제목: [회사 하나 차렸습니다.]</p>
+      <p class="narration"><span class="joel">조엘</span>은 메일을 열어본다. 내용은 더 짧았다. [생각보다 잘 굴러갑니다.] 첨부된 사진, 작은 사무실. 화이트보드. 그리고 그 앞에 서 있는 두 사람. <span class="catherine">캐서린</span>과, <span class="grace">그레이스</span>였다. <span class="grace">그레이스</span>는 예전보다 훨씬 편안한 표정이었다.</p>
+      <p class="narration"><span class="joel">조엘</span>은 사진을 한참 바라보다가 조용히 웃었다. 그의 답장은 더 짧았다. [기대하겠습니다.]</p>
+      <p class="narration">며칠 뒤, HR 포럼에서 <span class="sullivan">설리번</span>을 마주쳤다. 둘은 잠시 서로를 바라본다.</p>
+      <p><span class="speaker sullivan">설리번:</span> …오랜만이네요.</p>
+      <p><span class="speaker joel">조엘:</span> 그렇네요.</p>
+      <p><span class="speaker sullivan">설리번:</span> 요즘은 뭐 하세요?</p>
+      <p><span class="speaker joel">조엘:</span> 망가진 회사들 들여다봅니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 그건… 예전에도 잘 하던 일이었죠.</p>
+      <p class="narration">둘은 서로 길게 붙잡지 않았다. 잠깐의 대화를 마치고 각자의 방향으로 나아갔다.</p>
+      <p class="narration">다시 자신의 사무실로 돌아온 <span class="joel">조엘</span>은 잠시 화면을 바라보다 창밖을 본다. 불빛들 어딘가에서 누군가는 회사를 만들고, 누군가는 조직을 정리하고, 누군가는 새로운 시작을 하고 있다.</p>
+      <p class="narration">같은 회사에 있던 사람들이 지금은 서로 다른 길 위에 서 있다. 하지만 <span class="joel">조엘</span>은 기억한다. 그날 밤, 그 회의실에서 모두가 한 마음으로, 진심으로 &lt;블랙코퍼레이션&gt;을 살리려 했다는 것을. 그것이면 충분했다. <span class="joel">조엘</span>은 다시 화면을 바라본다.</p>
+      <p class="narration"><span class="joel">조엘</span>은 여전히, 조직이 무너지지 않는 방법을 찾는 사람으로 살아가고 있었다.</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <div id="exit_joel_next" style="margin-top:16px;"></div>
+    <div class="pg-num">24</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     퇴사한 캐서린 (엔딩) — p25
+══════════════════════════════════════ -->
+<div id="exit_catherine" class="page">
+  <div class="card">
+    <div class="section-title">퇴사한 캐서린 (엔딩)</div>
+    <div class="body-text">
+      <p class="narration">몇 달 뒤, <span class="catherine">캐서린</span>은 작은 사무실 계약서에 사인했다. 보증금은 크지 않았고, 책상은 중고였다. 창문으로 들어오는 햇살이 낡은 바닥에 길게 깔렸다. 강남의 야경이 내려다보이던 그 사무실과는 달랐다. 하지만 이상하게도, 더 설랬다.</p>
+      <p class="narration">의사결정은 한 줄이었고, 책임은 한 사람이었다. <span class="catherine">캐서린</span>은 그것으로 충분했다.</p>
+      <p class="narration">얼마 지나지 않아 <span class="grace">그레이스</span>가 짐을 들고 나타났다. <span class="catherine">캐서린</span>이 문을 열어줬다. 두 사람은 잠시 서로를 바라봤다. 긴 말이 필요하지 않았다.</p>
+      <p><span class="speaker grace">그레이스:</span> 이번엔 보고 라인 없이 가죠.</p>
+      <p><span class="speaker catherine">캐서린:</span> 아니, 이번엔 왜곡 없이 가자.</p>
+      <p class="narration">첫 프로젝트부터 둘의 합은 잘 맞았다. 자평하길, 기대 이상의 결과물이었다. 회의는 짧았고, 수정은 적었으며, 완성도는 높았다. 클라이언트는 결과물을 받아보고 며칠 뒤 먼저 연락을 해왔다. 재계약 제안이었다.</p>
+      <p class="narration">두 번째 프로젝트는 투자로 이어졌다. 세 번째는 업계 기사에 실렸다. <span class="catherine">캐서린</span>은 그 기사를 오래 들여다보지 않았다. <span class="grace">그레이스</span>는 소리 없이 웃었다. 둘 다 이미 알고 있었다. 이건 시작일 뿐이라는 것을.</p>
+      <p class="narration">작업실은 조금씩 넓어졌다. 사람을 뽑을 때 기준은 단순했다. [실력과 태도. 정치 없음.]</p>
+      <p class="narration">어느 날 저녁, <span class="catherine">캐서린</span>이 휴대폰을 들었다. 잠시 화면을 바라보다가 번호를 눌렀다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 설리번, 같이 할래요?</p>
+      <p class="narration">전화기 너머로 짧은 침묵이 흘렀다. 그리고 <span class="sullivan">설리번</span> 특유의 건조한 목소리가 들려왔다. 대답은 길지 않았다. 이직처에서 활약하고 있다는 소식이었다. 아쉽지만 다음에 인연이 이어지기를 바라며, 짧은 인사와 응원을 나누었다.</p>
+      <p class="narration">그리고 <span class="catherine">캐서린</span>은 노트북을 열어 메일 하나를 작성했다. 수신: <span class="joel">조엘</span> / 제목: [회사 하나 차렸습니다.]</p>
+      <p class="narration">보내기 버튼을 누르고, 창밖을 바라봤다. 도시의 야경이 조용히 반짝이고 있었다.</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <div id="exit_catherine_next" style="margin-top:16px;"></div>
+    <div class="pg-num">25</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     퇴사한 그레이스 (엔딩) — p26
+══════════════════════════════════════ -->
+<div id="exit_grace" class="page">
+  <div class="card">
+    <div class="section-title">퇴사한 그레이스 (엔딩)</div>
+    <div class="body-text">
+      <p class="narration">퇴사 후, <span class="grace">그레이스</span>는 한동안 아무 제안도 받지 않았다. 받아도 쉽게 움직이지 않았다.</p>
+      <p class="narration">그러던 어느 날, <span class="catherine">캐서린</span>에게서 연락이 왔다. 길지 않은 메시지였다. 콘텐츠 제작사를 차렸고, 제대로 한 번 만들어보고 싶다고.</p>
+      <p class="narration"><span class="grace">그레이스</span>는 메시지를 읽고 잠시 창밖을 바라봤다. 그리고 답장을 보냈다.</p>
+      <p class="narration"><span class="grace">그레이스</span>가 찾아간 <span class="catherine">캐서린</span>의 작은 사무실은 허름한 촬영 장비로 가득했다. 넓지도 않았고, 세련되지도 않았다. 하지만 회의는 명확했다. 불필요한 보고 라인도, 눈치를 살피는 침묵도 없었다. 결정이 나면 바로 움직였고, 문제가 생기면 바로 꺼냈다. <span class="grace">그레이스</span>는 그 분위기가 처음엔 낯설었다. 일하는 내내 어딘가에서 제동이 걸릴 것 같은 긴장을 오랫동안 몸에 달고 살았기 때문이었다.</p>
+      <p class="narration">그 긴장이 조금씩 풀리기 시작했다.</p>
+      <p class="narration"><span class="grace">그레이스</span>는 제작 총괄을 맡았다. 콘티 정리, 촬영 스케줄, 편집 라인, 배우 캐스팅까지. 예전처럼 보고 라인에서 왜곡되는 일은 없었다. 그녀가 잡은 방향이 그대로 결과물에 반영되었다. 처음으로, 자신이 한 일이 자신의 이름으로 남는 경험이었다.</p>
+      <p class="narration">첫 작품은 소박했다. 하지만 호흡이 정확했다. 댓글이 조금씩 달리기 시작했다. 이 팀은 뭔가 다르다는 말들이었다. 두 번째 작품은 바이럴을 탔고, 브랜드 협찬이 들어왔다. 투자도 붙었다.</p>
+      <p class="narration">어느 날은, 인터뷰 요청이 왔다. 기자가 콘텐츠 성공 비결을 물었다. <span class="grace">그레이스</span>는 잠시 생각하다 답했다.</p>
+      <p><span class="speaker grace">그레이스:</span> 각자의 자리에서, 각자의 책임을 지는 구조요. 그리고 그걸 서로 믿는 것.</p>
+      <p class="narration">말은 조용했지만 단단했다. 한때 '무능'이라 불리던 그녀의 이름이 엔딩 크레딧 맨 위에 올라갔다.</p>
+      <p class="narration">촬영이 끝난 밤, 장비를 정리하던 <span class="catherine">캐서린</span>이 불쑥 물었다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 힘들지 않아? 할 만 해?</p>
+      <p class="narration"><span class="grace">그레이스</span>는 장비 케이스를 닫으며 대답했다.</p>
+      <p><span class="speaker grace">그레이스:</span> 힘들어서 좋아요. 이곳처럼, 일 같은 일을 하고 싶었어요.</p>
+      <p class="narration">한때 이 업계에 이름을 남기고 싶다는 마음 하나로 버텨온 사람이었다. 공모전을 전전하고, 포트폴리오를 쌓고, 실력만 보는 곳을 찾아 헤맸다. 그리고 찾아낸 곳에서, 그녀의 이름은 오래도록 지워져 있었다.</p>
+      <p class="narration">하지만 지금, 엔딩 크레딧 맨 위에는 <span class="grace">그레이스</span>의 이름이 올라가 있었다.</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <div id="exit_grace_next" style="margin-top:16px;"></div>
+    <div class="pg-num">26</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     퇴사한 마이클 (엔딩) — p27
+══════════════════════════════════════ -->
+<div id="exit_michael" class="page">
+  <div class="card">
+    <div class="section-title">퇴사한 마이클 (엔딩)</div>
+    <div class="body-text">
+      <p class="narration">처음엔 억울했다. 조직이 날 몰라봤다고, 운이 나빴다고, 타이밍이 안 맞았다고 생각했다. <span class="donald">도날드</span>가 틀렸고, <span class="catherine">캐서린</span>이 방해했고, <span class="grace">그레이스</span>가 배신했다고. 그렇게 이름을 하나씩 꺼내며 정리하면, 자신의 자리는 항상 피해자였다.</p>
+      <p class="narration">하지만 혼자 일해보니 알았다. 변명할 사람이 없으니, 결과가 고스란히 자신에게 돌아왔다. 그리고 그 결과는, 다른 게 아니라 틀린 것이었다. <span class="grace">그레이스</span>의 기획안을 자신의 것인 양 올릴 때는 몰랐다. 그 기획이 얼마나 정교한 것인지를. 그 안에 자신이 한 것은 아무것도 없었다는 것을.</p>
+      <p class="narration">며칠 전, 클라이언트가 했던 말이 머릿속을 맴돌았다.</p>
+      <p><span class="speaker lawyer">클라이언트:</span> 아이디어는 둘째치고, 완성도가 부족합니다.</p>
+      <p class="narration">그 말을 들었을 때 처음으로 변명하지 않았다. 할 말이 없었다. 정확한 말이었으니까.</p>
+      <p class="narration">며칠을 걸었다. 카페에서 노트북을 열었다 닫기를 반복했다. 그리고 조용히 인정했다.</p>
+      <p class="narration">'나는 기획을 <b>좋아하는</b> 사람이었지, 잘하는 사람은 아니었구나.'</p>
+      <p class="narration">그리고 한 가지 더. '잘하는 사람 곁에 붙어서, 그것을 자신의 것으로 만들어온 사람이었다는 것도.'</p>
+      <p class="narration"><span class="michael">마이클</span>은 노트북을 덮었다. 더 이상 기획서를 쓰지 않았다. 그는 업계를 떠났다.</p>
+      <p class="narration">얼마 지나지 않아, 지인의 소개로 소규모 유통 회사에 들어갔다. 영업이었다. 숫자는 단순했고, 성과는 즉각적이었다. 눈치와 포장, 비위 맞추는 것이 능숙한 <span class="michael">마이클</span>에게는 영업이 더 적성에 맞았다. 이상하게도 마음이 편했다.</p>
+      <p class="narration">퇴근 후엔 혼자 작은 블로그를 썼다. 아이디어 노트를 정리했다. 아무에게도 평가받지 않는 글. 조회수는 적었지만, 처음으로 즐거웠다. 누군가의 것을 가져오지 않아도 되는, 온전히 자신의 것이었다.</p>
+      <p class="narration">어느 날, <span class="catherine">캐서린</span>과 <span class="grace">그레이스</span>의 인터뷰 기사를 보았다. 그는 시간을 내어 꼼꼼히 읽었다. 질투가 올라오길 기다렸는데, 오지 않았다. 대신 담담한 인정이 남았다.</p>
+      <p class="narration">"잘하네."</p>
+      <p class="narration">좋아하는 건, 좋아하는 걸로 남겨두기로 했다. 직업이 되지 않아도 괜찮았다. 취미로도 충분했다. 그리고 그것이 처음부터 자신이 있어야 할 자리였을지도 몰랐다.</p>
+      <p class="narration">그는 내일 아침 영업 미팅 자료를 정리하며 웃었다.</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <div id="exit_michael_next" style="margin-top:16px;"></div>
+    <div class="pg-num">27</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     비밀 감사 (p28)
+══════════════════════════════════════ -->
+<div id="secret_audit" class="page">
+  <div class="card">
+    <div class="section-title">비밀 감사</div>
+    <div class="direction-box">아래의 내용을 <b class="joel">조엘</b>이 읽어주세요.</div>
+    <div class="body-text">
+      <p class="narration"><span class="joel">조엘</span>은 자리에서 일어나 복도를 걸어 나간다. 문이 닫히자마자 휴대폰을 꺼낸다.</p>
+      <p><span class="speaker joel">조엘:</span> 이사님, 내부 감사 중 확인된 사안이 있습니다. <span class="donald">도날드</span> 대표의 경영 판단 과정에서 배임 소지를 시사하는 정황이 일부 확인되었습니다. 네, 그렇습니다. 자료들은 제가 동료들과 확보했습니다. 네. 즉시 임시 이사회 소집하고 자료를 준비해놓겠습니다. 그럼, 이사회에서 보고드리겠습니다.</p>
+      <p class="narration">그가 전화를 끊더니, 잠시 후 사내 메일 알림이 울린다.</p>
+      <p class="emphasis">[임시 이사회 소집 — 대표 직무 관련 안건]</p>
+      <div class="direction-box" style="border-color:#c0001a; background:#fff8f8;">
+        <b style="color:#c0001a;">💡 권고사직 통보, 인센티브 지급, 연봉인상 제안들이 일시적으로 무효화됩니다.</b>
+      </div>
+      <p class="narration">(<span class="joel">조엘</span>은 동료들을 향해 말한다.)</p>
+      <p><span class="speaker joel">조엘:</span> 곧 있을 이사회에 프로젝트를 진행하며 발견한 대표 배임 사유에 대해 보고하겠습니다. 다만, <b>증거 제출 여부는 여러분의 선택입니다.</b></p>
+      <hr class="divider">
+      <p class="emphasis">[이사회가 열렸습니다.]</p>
+      <p class="narration">이사회 의장이 서류를 정리하며 말한다.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 블랙코퍼레이션 대표의 직무 수행과 관련하여 중대한 이해충돌 가능성이 제기되었습니다. 이에 따라 대표의 배임 여부를 판단하기 위해 관련 자료 제출을 요청합니다. 해당 자료를 보유하고 있는 직원은 지금 즉시 제출하십시오.</p>
+      <p class="emphasis">"증거를 제출하시겠습니까. 아니면 이 침묵에 동참하시겠습니까?<br>보유 중인 증거물을 제출했다면, 체크해주세요."</p>
+    </div>
+
+    <div style="margin:28px 0 8px; font-size:13px; color:#888; letter-spacing:1px; text-transform:uppercase;">증거물 목록</div>
+    <ul class="evidence-list" id="evidence-form">
+      <li><label style="display:flex;align-items:center;width:100%;cursor:pointer;">
+        <input type="checkbox" onchange="updateEvidenceCount()">
+        도날드의 지시 녹취록
+      </label></li>
+      <li><label style="display:flex;align-items:center;width:100%;cursor:pointer;">
+        <input type="checkbox" onchange="updateEvidenceCount()">
+        지표 조작 매뉴얼
+      </label></li>
+      <li><label style="display:flex;align-items:center;width:100%;cursor:pointer;">
+        <input type="checkbox" onchange="updateEvidenceCount()">
+        이중 장부
+      </label></li>
+      <li><label style="display:flex;align-items:center;width:100%;cursor:pointer;">
+        <input type="checkbox" onchange="updateEvidenceCount()">
+        베트남 이주 및 사업 비자 서류
+      </label></li>
+      <li><label style="display:flex;align-items:center;width:100%;cursor:pointer;">
+        <input type="checkbox" onchange="updateEvidenceCount()">
+        법인 파산 및 청산 절차 검토 보고서
+      </label></li>
+    </ul>
+
+    <div class="evidence-count-display" id="evidence-count-display">제출 증거물: 0개</div>
+    <div class="direction-box">
+      • 3개 이하 → 배임 방어 성공 (29p)<br>
+      • 4개 이상 → 배임 성립 / 임시대표 선임 (30p)
+    </div>
+    <button class="btn btn-red" onclick="submitEvidence()">→ 증거물 제출 및 결과 확인</button>
+    <div class="pg-num">28</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     증거물 3개 이하 (p29) → 배임 방어 성공
+══════════════════════════════════════ -->
+<div id="evidence_few" class="page">
+  <div class="card">
+    <div class="section-title">증거물 3개 이하 — 배임 방어 성공</div>
+    <div class="body-text">
+      <p class="narration">이사회 의장이 서류를 정리한다.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 현재로서는 대표의 배임을 단정하기에 증거가 부족합니다. 본 안건은 추가 자료 확보 전까지 종결합니다. 대표의 직무는 유지됩니다.</p>
+      <div class="direction-box" style="background:#f8fff8; border-color:#1a7a1a;">
+        <b style="color:#1a7a1a;">💡 권고사직, 인센티브, 연봉협상 내용이 다시 유효해집니다.</b>
+      </div>
+      <p class="narration">회의실 공기가 천천히 풀린다. 그러나 안도는 없다. 누군가 숨을 내쉬고, 누군가는 눈을 피한다. <span class="donald">도날드</span>가 자리에서 일어난다.</p>
+      <p><span class="speaker donald">도날드:</span> 혼란을 드린 점 유감입니다. 회사는 계속 앞으로 나아갑니다. 근거 없는 의혹은 조직을 해칩니다.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 오늘 인사 조치는 유효합니다. 해당 대상자와의 절차를 진행하십시오.</p>
+      <p class="narration">문이 닫힌다. 복도에 서 있는 사람들의 표정이 서로를 스친다. 누가 제출했고, 누가 숨겼는지 말하지 않아도 안다. <span class="donald">도날드</span>는 천천히 넥타이를 고친다.</p>
+      <p><span class="speaker donald">도날드:</span> 회사는 신뢰 위에 세워집니다. 저를 믿어주신 분들께 감사드립니다.</p>
+      <p class="narration">그 말이 끝나자 침묵이 더 깊어진다. 제출되지 않은 증거는 누군가의 서랍 안에서 아직 열리지 않은 채 남아 있다.</p>
+      <p class="emphasis">배임은 성립되지 않았습니다.<br>도날드는 대표직을 계속 유지합니다.</p>
+    </div>
+    <button class="btn btn-gold" style="margin-top:24px;" onclick="goTo('betrayal_defense')">→ 배임 방어 성공 엔딩 읽기 (39p)</button>
+    <div class="pg-num">29</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     증거물 4개 이상 (p30~31) → 임시대표 선임
+══════════════════════════════════════ -->
+<div id="evidence_many" class="page">
+  <div class="card">
+    <div class="section-title">증거물 4개 이상 — 배임 성립</div>
+    <div class="body-text">
+      <p class="narration">테이블 위에 네 개 이상의 서류가 놓여 있다.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 제출된 증거를 검토했습니다. 자금 회수 압박 직후 해외 법인 설립 준비, 동시에 파산 책임 회피 검토. 이는 회사 이익과 명백히 충돌합니다.</p>
+      <p><span class="speaker donald">도날드:</span> 오해입니다. 최악을 대비한 경영 전략 판단이었습니다.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 투자자 동의 없는 자금 집행은 재량 범위를 벗어났습니다. 표결하겠습니다.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 만장일치로 대표 직무를 정지합니다. 해임 절차에 착수합니다.</p>
+      <p class="narration">(<span class="donald">도날드</span>는 바닥을 바라본 채, 움직이지 않는다.)</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 오늘부로 대표 권한은 박탈됩니다. 기존 인사 조치는 전면 재검토합니다.</p>
+      <div class="direction-box" style="border-color:#c0001a; background:#fff8f8;">
+        <b style="color:#c0001a;">💡 권고사직 통보, 인센티브 지급, 연봉인상 제안들이 확정적으로 무효화됩니다.</b>
+      </div>
+      <p class="narration">문이 열리고 법무팀이 들어선다. <span class="donald">도날드</span>를 향해 말한다.</p>
+      <p><span class="speaker lawyer">법무팀:</span> 관련 자료 인계 바랍니다.</p>
+      <p class="narration"><span class="donald">도날드</span>는 원망스러운 눈빛으로 주변을 둘러보지만, 누구도 눈을 마주치지 않는다.</p>
+      <p><span class="speaker donald">도날드:</span> 당신들, 후회할 겁니다…!</p>
+      <p class="narration">법무팀과 함께 자리를 이동하는 <span class="donald">도날드</span>. 회의실 문이 닫힌다. 이번엔 대표가 떠나갔다.</p>
+      <p class="narration">남은 직원들을 대상으로 이사회 의장이 말한다.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 대표 해임으로 경영 공백이 발생했습니다. 경영 공백을 막기 위해, 내부 인물 중 한 명을 추천하십시오. 임시 대표(CEO 직무대행)을 뽑겠습니다.</p>
+    </div>
+    <div class="direction-box">다음 단계로 이동하여 임시 대표를 선임하세요.</div>
+    <button class="btn btn-blue" style="margin-top:8px;" onclick="goTo('acting_select')">→ 임시 대표 선임하기 (31p)</button>
+    <div class="pg-num">30–31</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     임시대표 선임 선택 (p31)
+══════════════════════════════════════ -->
+<div id="acting_select" class="page">
+  <div class="card">
+    <div class="section-title">임시 대표 선임</div>
+    <div class="body-text">
+      <p><span class="speaker catherine">캐서린:</span> …우리가 서로를 추천하라는 겁니까.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 네.</p>
+      <p><span class="speaker joel">조엘:</span> 회사 구조와 재무 상황을 가장 잘 아는 사람이 필요합니다.</p>
+      <p><span class="speaker sullivan">설리번:</span> 위기를 수습할 전략을 짤 수 있는 사람이 필요합니다.</p>
+      <p class="narration"><span class="catherine">캐서린</span>은 팔짱을 낀 채 말을 아낀다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 말만 하는 게 아니라, 실무를 이해하고 견적을 낼 줄 아는 것이 기반이 되어야겠지요.</p>
+      <p><span class="speaker michael">마이클:</span> 본인 추천도 가능합니까.</p>
+      <p><span class="speaker lawyer">이사회 의장:</span> 본인을 추천하는 것도 가능합니다. 직무대행은 이사회 승인 즉시 효력을 갖습니다. 추천은 자유입니다.</p>
+    </div>
+    <div class="direction-box" style="background:#fffbf0; border-color:#8a6800;">
+      <b style="color:#8a6800;">• 대표가 된 플레이어: +4점</b><br>
+      <b style="color:#8a6800;">• 대표가 된 사람은, 즉시 보너스 카드를 구성원들에게 재지급하세요. 누구에게 줄지는 대표 자유입니다.</b>
+    </div>
+    <div class="direction-box">
+      아래 문장을 다 함께 소리내어 읽고, 지시에 따라주세요.<br><br>
+      <b>"본인을 추천하는 것도 가능하며, 직무대행은 이사회 승인 즉시 효력을 갖습니다.<br>
+      의논할 시간은 주어지지 않습니다. 신호에 맞춰 직무대행을 지목하십시오.<br>
+      동점일 경우, [가위 바위 보]에서 이긴 사람으로 결정됩니다.<br><br>
+      하나, 둘, 셋"</b><br><br>
+      (가위, 바위, 보를 진행합니다.)
+    </div>
+    <div class="choice-group">
+      <div class="choice-label">대표가 된 인물 선택</div>
+      <button class="btn" onclick="selectActing('sullivan')"><b class="sullivan">설리번</b>이 대표가 되었다 → 32p</button>
+      <button class="btn" onclick="selectActing('joel')"><b class="joel">조엘</b>이 대표가 되었다 → 33p</button>
+      <button class="btn" onclick="selectActing('michael')"><b class="michael">마이클</b>이 대표가 되었다 → 34p</button>
+      <button class="btn" onclick="selectActing('catherine')"><b class="catherine">캐서린</b>이 대표가 되었다 → 35p</button>
+      <button class="btn" onclick="selectActing('grace')"><b class="grace">그레이스</b>가 대표가 되었다 → 36p</button>
+    </div>
+    <div class="pg-num">31</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     설리번 직무대행 (p32)
+══════════════════════════════════════ -->
+<div id="acting_sullivan" class="page">
+  <div class="card">
+    <div class="section-title">설리번 직무대행 선임</div>
+    <div class="body-text">
+      <p class="narration"><span class="sullivan">설리번</span>이 대표가 된 후, 블랙코퍼레이션의 방향은 이전과 완전히 달라지기 시작했다.</p>
+      <p class="narration">이전에는 발표를 잘하는 사람이 더 많은 리소스를 가져갔고, 실제 가능성보다 '될 것처럼 보이는 기획'이 우선되는 경우가 많았다. 회의실에서는 늘 거창한 목표와 낙관적인 수치가 오갔지만, 그 부담은 결국 실무자들에게 돌아갔다.</p>
+      <p class="narration"><span class="sullivan">설리번</span>은 그 구조를 그대로 두지 않았다.</p>
+      <p class="narration">성과 가능성이 낮은 프로젝트는 정리되었고, 회의와 보고는 데이터와 결과 중심으로 바뀌었다. 업무 범위와 책임도 다시 나뉘었다.</p>
+      <p class="narration">무엇보다 달라진 건 평가 방식이었다. 누가 말을 잘하는지가 아니라, 실제로 결과를 만드는 사람이 중심에 서기 시작했다. 그동안 정치에 밀려 인정받지 못했던 사람들은 조금씩 제자리를 찾았고, 반대로 다른 사람의 성과 뒤에 숨어 있던 인력들은 자연스럽게 영향력을 잃어갔다.</p>
+      <p class="narration">처음에는 답답하다는 말도 나왔다. 예전의 블랙코퍼레이션은 늘 뜨겁고, 무모할 만큼 빠르게 움직이는 회사였기 때문이다. 하지만 시간이 지나자 분위기는 달라졌다.</p>
+      <p class="narration">출시 직전까지 방향이 뒤집히는 일이 줄었고, 실패 가능성이 높은 프로젝트에 끝없이 리소스를 쏟아붓는 일도 사라졌다. 조직에선 "누가 공을 가져갈지"보다 "어떻게 완성할지"를 이야기하는 분위기가 자리 잡았다.</p>
+      <p class="narration">몇 달 뒤, <span class="sullivan">설리번</span> 대표의 블랙코퍼레이션의 첫 실적이 발표되었다.</p>
+      <p class="narration">폭발적인 성공은 아니었다. 하지만 블랙코퍼레이션은 처음으로, 누군가를 갈아 넣거나 허황된 기대를 팔지 않고도 결과를 만들어내고 있었다.</p>
+      <p class="narration"><span class="sullivan">설리번</span>은 보고서를 잠시 바라보다가 짧게 말했다.</p>
+      <p><span class="speaker sullivan">설리번:</span> "…다행입니다."</p>
+      <p class="narration"><span class="sullivan">설리번</span>의 블랙코퍼레이션은 더 이상 신화를 만드는 회사가 아니었다. 대신 그녀는, 오래 버틸 수 있는 회사를 다시 만들고 있었다.</p>
+    </div>
+    <button class="btn btn-blue" style="margin-top:24px;" onclick="goTo('betrayal_donald')">→ 배임 이후 도날드 읽기 (37p)</button>
+    <div class="pg-num">32</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     조엘 직무대행 (p33)
+══════════════════════════════════════ -->
+<div id="acting_joel" class="page">
+  <div class="card">
+    <div class="section-title">조엘 직무대행 선임</div>
+    <div class="body-text">
+      <p><span class="speaker lawyer">이사회 의장:</span> 직무대행으로 <span class="joel">조엘</span>을 선임합니다.</p>
+      <p><span class="speaker michael">마이클:</span> 경리가 대표라고요?</p>
+      <p class="narration"><span class="joel">조엘</span>은 그 말을 무시했다. 대표석에 앉은 그는 첫 회의에서 짧게 선언했다.</p>
+      <p><span class="speaker joel">조엘:</span> 저는 창작을 하지 않습니다. 대신 구조를 만듭니다. 모든 프로젝트는 책임 실무자에게 전권 위임합니다. 성과는 숫자로 평가하고, 보상도 숫자로 지급합니다. 실패는 감정 없이 기록으로 남고, 다음 기회는 줄어듭니다.</p>
+      <p class="narration"><span class="grace">그레이스</span>는 그 틈을 놓치지 않았다. <span class="joel">조엘</span>의 선언이 끝나던 날 밤, 그녀는 기획안을 작성하기 시작했다. 한 명의 PD로서 처음으로 자신의 이름을 올린 기획안이었다. 기획안은 통과됐다. 누가 밀어준 것도, 누가 허락한 것도 아니었다. 내용이 좋았다. 그것으로 충분했다.</p>
+      <p class="narration">세 달이 지나자 분위기가 달라지기 시작했다. 효율적인 공정을 위해 각 팀이 스스로 계산하기 시작했다. 재작업 비율이 줄었고, 마감은 지켜지기 시작했다.</p>
+      <p class="narration"><span class="joel">조엘</span>은 약속대로 인센티브를 지급했다. 직원들의 표정이 달라졌다. 열심히 하면 돌아오는 것이 있다는 사실이, 말이 아닌 숫자로 증명되는 구조였다.</p>
+      <p class="narration"><span class="michael">마이클</span>의 팀만 달랐다. 전권이 주어졌지만 결과는 나오지 않았다. 몇 달 뒤, <span class="michael">마이클</span>은 조용히 사무실을 떠났다. 누가 내보낸 것이 아니었다. 성과가 없으면 보상도 없는, <span class="joel">조엘</span>이 설계한 구조가 자연스럽게 그를 걸러냈다.</p>
+      <p class="narration">여섯 달 후, 투자자 보고에서 수익 구조가 명확하다는 평가가 나왔다. 책임 단위가 분리되어 있고, 성과와 보상이 연동되어 있다는 것이었다. 추가 투자가 승인됐다.</p>
+      <p class="narration">1년이 지났다. 블랙코퍼레이션은 규모가 크지 않았다. 하지만 업계에서 가장 안정적인 제작사로 평가받기 시작했다. 한때 누군가의 그늘 아래 이름이 지워져 있던 <span class="grace">그레이스</span>는 핵심 책임 PD로 자리를 잡았고, <span class="sullivan">설리번</span>은 전략 총괄로 구조를 다듬었다.</p>
+      <p class="narration">카리스마도, 정치도, 의리도 아니었다. 책임과 보상, 그리고 공평한 기회. 그 단순한 원칙이 블랙코퍼레이션을 다시 세웠다.</p>
+    </div>
+    <button class="btn btn-blue" style="margin-top:24px;" onclick="goTo('betrayal_donald')">→ 배임 이후 도날드 읽기 (37p)</button>
+    <div class="pg-num">33</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     마이클 직무대행 (p34)
+══════════════════════════════════════ -->
+<div id="acting_michael" class="page">
+  <div class="card">
+    <div class="section-title">마이클 직무대행 선임</div>
+    <div class="body-text">
+      <p><span class="speaker lawyer">이사회 의장:</span> 직무대행으로 <span class="michael">마이클</span>을 선임합니다. 즉시 효력이 발생합니다.</p>
+      <p class="narration">회의실이 순간 불편한 정적에 잠겼다. <span class="michael">마이클</span>은 자리에서 일어나 대표석으로 천천히 걸어갔다. 앉자마자 테이블을 손가락으로 한 번 두드렸다. 마치 오래 기다려온 자리인 것처럼.</p>
+      <p><span class="speaker michael">마이클:</span> 늦은 감이 있지만, 더 늦기 전에 바로잡겠습니다. 전면 재편 갑니다. 공격적으로.</p>
+      <p class="narration"><span class="catherine">캐서린</span>이 비웃듯 숨을 내쉬었다. 지금까지의 2팀의 결정 대부분이 <span class="michael">마이클</span>의 승인 아래였다고 지적했다. <span class="grace">그레이스</span>도 참다못해 무리한 일정을 만든 것도 그였다고 받아쳤다.</p>
+      <p><span class="speaker michael">마이클:</span> 이사회의 결정입니다. 싫으면 나가십시오.</p>
+      <p class="narration">짧은 침묵이 흘렀다. 회의실 공기가 무겁게 내려앉았다. 대표는 선임되었지만, 신뢰는 선임되지 않았다.</p>
+      <p class="narration"><span class="michael">마이클</span> 체제 2주 차. 회의는 길어졌고, 검토의 빈도와 지시는 늘었다. 일정은 3주가 당겨졌고, 외주 팀이 추가로 붙었다. 완성도는 나중에 다듬으면 된다고 했다.</p>
+      <p class="narration">현장은 바로 흔들렸다. 설정과 일정은 수없이 충돌이 발생했고, 수정 없이 밀어붙인 결과는 재작업으로 돌아왔다. 수정, 수정, 또 수정.</p>
+      <p class="narration">한 달 후, 작업 지시가 매일 바뀐다는 이유로 외주 업체 두 곳이 계약 해지를 통보했다. <span class="michael">마이클</span>은 해당 업체들의 프로의식이 부족하다고 지적했다. 두 달 후, 투자자 정기 보고에서 수치 왜곡이 지적됐다. <span class="michael">마이클</span>은 일시적 조정이라고 했다. 최종 결과로 증명하겠다고 했다. 하지만 최종 결과는 나오지 않았다.</p>
+      <p class="narration">그 책임자로 <span class="catherine">캐서린</span>에게 해고를 통보했다. <span class="catherine">캐서린</span>은 자진 퇴사했다.</p>
+      <p class="narration">다섯 달 후. 투자자 철수 선언. 경영 신뢰 상실. 직원은 모두 떠났고, 프로젝트는 중단됐다. 사무실 불이 꺼진 구역이 조금씩 늘어났다. <span class="michael">마이클</span>은 텅 빈 회의실에 홀로 남아 중얼거렸다.</p>
+      <p><span class="speaker michael">마이클:</span> 타이밍이 안 좋았을 뿐이야.</p>
+      <p class="narration">하지만 타이밍은 돌아오지 않았다. <span class="michael">마이클</span>은 마지막까지 대표석에 앉아 있었다. 이번엔 도망칠 사람도, 탓할 대표도 없었다. 그가 원하던 자리에서, 회사는 가장 빠르게 무너졌다.</p>
+    </div>
+    <button class="btn btn-blue" style="margin-top:24px;" onclick="goTo('betrayal_donald')">→ 배임 이후 도날드 읽기 (37p)</button>
+    <div class="pg-num">34</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     캐서린 직무대행 (p35)
+══════════════════════════════════════ -->
+<div id="acting_catherine" class="page">
+  <div class="card">
+    <div class="section-title">캐서린 직무대행 선임</div>
+    <div class="body-text">
+      <p><span class="speaker lawyer">이사회 의장:</span> 직무대행으로 <span class="catherine">캐서린</span>을 선임합니다.</p>
+      <p class="narration">회의실이 잠시 술렁인다.</p>
+      <p><span class="speaker michael">마이클:</span> 외부 법인을 등록한 사람이 대표라니요?</p>
+      <p class="narration"><span class="catherine">캐서린</span>은 대답할 가치를 못 느꼈다.</p>
+      <p><span class="speaker joel">조엘:</span> 이해충돌 문제는 정리됐습니까.</p>
+      <p><span class="speaker catherine">캐서린:</span> 맞습니다. 등록했습니다. 이 회사가 무너질 가능성에 대비해서요. K-Creative는 당분간 휴면 처리하겠습니다. 대신 필요하다면 자회사 형태로 편입해 리스크를 분산하죠.</p>
+      <p class="narration"><span class="catherine">캐서린</span>이 가장 먼저 한 것은 구조를 자르는 일이었다. 블랙코퍼레이션은 자체 IP 보유 중심으로 축소하고, 제작은 K-Creative로 분리했다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 손실을 떠넘기는 게 아닙니다. 한 곳이 흔들려도 전체가 무너지지 않게 하는 겁니다. 수익 배분과 처우는 동일 기준으로 적용합니다.</p>
+      <p class="narration">모든 프로젝트는 손익분기점 계산 후 승인됐다. 감이 아니라 계약서로 움직이는 구조였다. 두 달 후, 사무실은 절반으로 줄었다. 하지만 남은 공간은 오히려 더 명확하게 돌아가기 시작했다.</p>
+      <p><span class="speaker grace">그레이스:</span> 제작 파이프라인 재정비 완료했습니다. 재작업 비율 6%까지 낮췄습니다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 이 숫자 유지합시다. 다음 프로젝트 승인합니다.</p>
+      <p class="narration">브릿지 투자도 승인됐다. 조건이 명확한 투자였다.</p>
+      <p><span class="speaker joel">조엘:</span> 조건이 명확할수록 신뢰가 쌓입니다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 그게 우리가 지금까지 못 한 겁니다.</p>
+      <p class="narration">성과를 내지 못한 <span class="michael">마이클</span>은 조용히 정리됐다. 누가 내보낸 것이 아니었다.</p>
+      <p class="narration">6개월 후, 블랙코퍼레이션은 IP 홀딩 컴퍼니로 재편됐다. K-Creative는 제작 자회사로 공식 편입됐다. 업계 기사가 짧게 실렸다. 위기 속 구조 개편 성공, 제작과 IP 분리 전략이 통했다는 내용이었다. <span class="sullivan">설리번</span>은 전략 책임자로 남았고, <span class="grace">그레이스</span>는 제작 총괄로 승진했다.</p>
+      <p class="narration"><span class="catherine">캐서린</span>은 대표석에 앉아 계약서를 넘겼다.</p>
+      <p><span class="speaker catherine">캐서린:</span> 이번엔 제대로 만들어보죠.</p>
+      <p class="narration">회사는 살아남았다. 이번엔, 흔들리지 않는다.</p>
+    </div>
+    <button class="btn btn-blue" style="margin-top:24px;" onclick="goTo('betrayal_donald')">→ 배임 이후 도날드 읽기 (37p)</button>
+    <div class="pg-num">35</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     그레이스 직무대행 (p36)
+══════════════════════════════════════ -->
+<div id="acting_grace" class="page">
+  <div class="card">
+    <div class="section-title">그레이스 직무대행 선임</div>
+    <div class="body-text">
+      <p><span class="speaker lawyer">이사회 의장:</span> 직무대행으로 <span class="grace">그레이스</span>를 선임합니다.</p>
+      <p><span class="speaker michael">마이클:</span> 매니저가 대표라니요?</p>
+      <p class="narration"><span class="grace">그레이스</span>는 흔들리지 않는다.</p>
+      <p><span class="speaker grace">그레이스:</span> 저는 현장을 알고 있습니다. 그리고 이번엔 기록으로 판단하겠습니다.</p>
+      <p class="narration">한 달 후. 구조는 빠르게 정리됐다. 무리한 프로젝트는 중단, 재무 흐름은 안정권으로 복귀되었다.</p>
+      <p><span class="speaker grace">그레이스:</span> 모든 팀은 동일한 조건에서 평가하겠습니다. 마이클 PD님. 프로젝트 하나, 전권을 드리겠습니다. 일정과 예산은 동일 기준입니다.</p>
+      <p><span class="speaker michael">마이클:</span> 드디어 제대로 증명할 기회군요.</p>
+      <p class="narration">두 달 후. 보고 회의.</p>
+      <p><span class="speaker joel">조엘:</span> 예산 초과 28%. 재작업 비율 31%, 외주 두 곳 계약 파기되었습니다.</p>
+      <p><span class="speaker grace">그레이스:</span> 수정 지시가 하루에 세 번씩 변경되었네요. 기록에 남아 있습니다.</p>
+      <p><span class="speaker michael">마이클:</span> 현장은 유연해야—</p>
+      <p><span class="speaker grace">그레이스:</span> 유연함과 혼란은 다릅니다.</p>
+      <p><span class="speaker michael">마이클:</span> 한 번의 실패로—</p>
+      <p><span class="speaker grace">그레이스:</span> 한 번이 아닙니다. 기록상 반복입니다.</p>
+      <p><span class="speaker grace">그레이스:</span> 공정하게 기회를 드렸습니다. 결과도 공정하게 보겠습니다. 오늘부로 권고사직입니다.</p>
+      <p><span class="speaker michael">마이클:</span> 당신이 날 자른다고?</p>
+      <p><span class="speaker grace">그레이스:</span> 제가 자르는 게 아닙니다. 지표가 정리하는 겁니다.</p>
+      <p class="narration"><span class="michael">마이클</span>의 표정이 무너진다.</p>
+      <p class="narration">6개월 후. 회사는 안정적으로 성장 중이다. 재작업 비율 5%, 일정 준수율 98%. 투자자 신뢰 회복.</p>
+      <p class="emphasis">"현장 출신 대표, 체질 개선 성공"</p>
+      <p class="narration">대표실에서, <span class="grace">그레이스</span>는 창밖을 바라본다.</p>
+      <p><span class="speaker grace">그레이스:</span> 사람을 자른 게 아니라, 망가진 방식을 정리한 겁니다.</p>
+      <p class="narration">이번엔 공정했고, 단호했고, 흔들리지 않았다. 그 결과 회사는 살아남았다. 그리고 처음으로, 실력이 기준이 되었다.</p>
+    </div>
+    <button class="btn btn-blue" style="margin-top:24px;" onclick="goTo('betrayal_donald')">→ 배임 이후 도날드 읽기 (37p)</button>
+    <div class="pg-num">36</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     배임 이후 도날드 (엔딩) — p37~38
+══════════════════════════════════════ -->
+<div id="betrayal_donald" class="page">
+  <div class="card">
+    <div class="section-title">배임 이후 도날드 (엔딩)</div>
+    <div class="body-text">
+      <p class="narration">배임 혐의 조사 개시. 서류 한 장이 그의 책상 위에 올라왔다. 그는 오래 바라봤다. 예상하지 못한 건 아니었다. 다만 이렇게 빨리 올 줄은 몰랐다.</p>
+      <p class="narration"><span class="donald">도날드</span>가 오랫동안 조심스럽게 쌓아온 것들이 하나씩 수면 위로 올라왔다. 막으려 했지만 이미 늦었다. 증거는 생각보다 훨씬 많았고, 생각보다 훨씬 선명했다.</p>
+      <p class="narration">가장 먼저 떠오른 건 <span class="sullivan">설리번</span>이었다. 그녀가 알고 있는 것들, 그녀가 서명한 서류들. <span class="sullivan">설리번</span>에게 연락을 시도했지만 돌아오는 건 없었다. <span class="joel">조엘</span>도 마찬가지였다. 그가 기록해둔 자금 집행 내역이 고스란히 조사 자료로 넘어갔다는 소식을 나중에야 들었다.</p>
+      <p class="narration"><span class="donald">도날드</span>는 변호사를 선임했다. 첫 미팅에서 담담하게 말했다.</p>
+      <p><span class="speaker donald">도날드:</span> 회사를 살리려 한 겁니다. 그 돈이 어디서 왔는지, 제가 얼마나 쏟아부었는지 아무도 모릅니다.</p>
+      <p><span class="speaker lawyer">변호사:</span> 알겠습니다. 하지만 법은 의도보다 행위를 봅니다.</p>
+      <hr class="divider">
+      <p class="narration">재판은 길었다. <span class="donald">도날드</span>는 매 기일마다 법원을 오갔다. 한때 투자자들 앞에서 화려한 비전을 설파하던 그 입으로, 이제는 자신의 행위를 해명해야 했다. 방청석은 조용했다. 업계 사람 몇이 왔다가 갔다.</p>
+      <p class="narration">재판이 길어질수록, <span class="donald">도날드</span>의 머릿속에는 이상하게도 법정 밖의 장면들이 자꾸 떠올랐다. 옥탑방 시절 밤새 기획서를 다듬던 일. 중고 노트북 화면 앞에서 동료들과 나눠 먹던 컵라면. 블랙코퍼레이션이라는 이름이 여러분 인생에서 가장 눈부신 훈장이 되게 하겠다고 했던 그날의 약속. 그때 그 말은 진심이었다. 지금도, 그것만큼은 진심이었다고 생각했다.</p>
+      <p class="narration">하지만 진심이 행위를 정당화하지는 않는다는 것을, 그는 이제 알고 있었다.</p>
+      <p class="narration">1심 판결이 나던 날, 기사는 짧게 실렸다.</p>
+      <p class="emphasis">"전 블랙코퍼레이션 대표, 배임 혐의 1심 유죄."</p>
+      <p class="narration"><span class="donald">도날드</span>는 판결문을 오래 들여다봤다. 억울하다는 생각이 없지 않았다. 직원들의 월급을 지키기 위해, 회사를 살리기 위해 한 선택들이었다. 그 선택들이 틀렸다고는 아직도 생각하지 않았다. 하지만 그 선택들이 쌓여 이 자리를 만들었다는 것 또한, 외면할 수 없었다.</p>
+      <p class="narration">항소를 했다. 결과는 바뀌지 않았다.</p>
+      <hr class="divider">
+      <p class="narration">집행유예 판결이 나던 날, 법원 앞에서 그는 오래 서 있었다. 바람이 불었다. 강남의 야경이 보이는 사무실, 처음 투자를 받던 날의 흥분, 대표실 벽면을 가득 채웠던 직원들과의 사진들이 하나씩 스쳐 지나갔다.</p>
+      <p class="narration">그리고 문득 생각했다. 내가 정말 지키고 싶었던 건 회사였을까, 아니면 그 안에 있던 사람들이었을까. 아니면, 그 모든 것을 만들어낸 나였을까.</p>
+      <p class="narration">업계 어딘가에서 블랙코퍼레이션이라는 이름이 여전히 돌아다닌다는 소식을 들었다. 다른 사람들의 손으로, 다른 방식으로. 자신이 만든 이름 속에, 자신이 없었다.</p>
+      <p class="narration">이상하게도, 그것이 가장 마음에 걸렸다. 분하거나 억울해서가 아니었다. 그 이름이 자신보다 더 오래, 더 단단하게 살아남고 있다는 사실이, 그저 아렸다.</p>
+      <p class="narration"><span class="donald">도날드</span>는 천천히 걸음을 옮겼다. 뒤를 돌아보지 않으려 했다. 하지만 한 걸음을 내딛고, 잠시 멈췄다. 그리고 돌아봤다. 법원 건물, 그 너머 어딘가에 있을 강남의 불빛. 5년 전, 그 모든 것이 시작된 낡은 옥탑방.</p>
+      <p class="narration">그는 오래 그 방향을 바라봤다. 그리고 다시 걸었다.</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <button class="btn" style="margin-top:24px;" onclick="goTo('commentary')">코멘터리 읽기</button>
+    <button class="btn" style="margin-top:8px;" onclick="restartGame()">처음으로 돌아가기</button>
+    <div class="pg-num">37–38</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     배임 방어 성공 엔딩 (p39~41)
+══════════════════════════════════════ -->
+<div id="betrayal_defense" class="page">
+  <div class="card">
+    <div class="section-title">배임 방어 성공 (엔딩)</div>
+    <div class="body-text">
+      <p class="narration">대표실, <span class="donald">도날드</span>는 파일 두 개를 거칠게 꺼낸다.</p>
+      <p class="narration">[베트남 이주 및 사업 비자 신청서 — 승인 완료]<br>[법인 파산 및 청산 절차 검토 보고서]</p>
+      <p><span class="speaker donald">도날드:</span> 내가 여기까지 다 끌고 왔어. 무능한 것들 수습하느라 망한 거지, 내가 망친 게 아니야…!</p>
+      <p class="narration">그가 비자 승인 도장을 확인하자, 휴대폰이 울린다.</p>
+      <p><span class="speaker michael">마이클:</span> 대표님, 투자자 쪽에서—</p>
+      <p><span class="speaker donald">도날드:</span> 대응 매뉴얼대로 해. 마이클. 난 외부 일정이 있어서 이만.</p>
+      <p class="narration">일방적으로 전화를 끊는다. 가방에 서류를 밀어 넣고, 여권을 확인한다.</p>
+      <p><span class="speaker donald">도날드:</span> 다들 책임질 줄은 모르고, 결과만 나오면 나한테 기대지…! 내가 아니었으면 진작 망했을 거라고…! 무능한 것들…!</p>
+      <p class="narration">항공권 화면. [인천 → 호치민] [출발: 오늘 밤 22:45]</p>
+      <p class="narration">탑승 마감 2시간 전, 그는 서둘러 재킷을 입다가 책상 위 명패를 떨어트린다. 엘리베이터 문이 닫힌다. 택시를 타고 시간 맞춰 공항에 도착한 <span class="donald">도날드</span>, 안내 방송이 울린다.</p>
+      <p class="emphasis">"호치민행 탑승을 마감합니다."</p>
+      <p class="narration">시간이 임박하자 <span class="donald">도날드</span>는 초조해진다. 걸음을 재촉해 출국 심사대 앞에 선다.</p>
+      <p><span class="speaker lawyer">직원:</span> 출국 목적이 무엇입니까.</p>
+      <p><span class="speaker donald">도날드:</span> 사업 확장입니다.</p>
+      <p class="narration">신뢰감 있는 젠틀한 목소리로 대답하자, <span class="donald">도날드</span>를 흘겨보던 직원의 도장이 찍힌다. <span class="donald">도날드</span>는 뒤를 돌아보지 않고 게이트를 지나간다.</p>
+      <p class="narration" style="font-style:italic; color:#555;">'나 하나만 살면 돼. 회사는 다시 만들 수 있어. 사람은 갈아 끼우면 되고.'</p>
+      <hr class="divider">
+      <p class="narration">다음 날, 회사.</p>
+      <p><span class="speaker joel">조엘:</span> 도날드가 연락 두절입니다.</p>
+      <p><span class="speaker michael">마이클:</span> 번호가… 해지됐는데요?</p>
+      <p><span class="speaker sullivan">설리번:</span> 설마…</p>
+      <p class="narration"><span class="sullivan">설리번</span>이 대표실에 널부러진 자료들을 살펴본다. 해외 법인 등기 자료, 대표 이름, 베트남 호치민 주소.</p>
+      <p><span class="speaker sullivan">설리번:</span> 우릴 남겨두고 갔네요.</p>
+      <p class="narration"><span class="sullivan">설리번</span>이 <span class="donald">도날드</span>에게 전하려던 법원 등기 우편들을 도날드의 책상 위에 놓는다.</p>
+      <p class="narration">[투자금 반환 청구 소송], [계좌 가압류 통지], [대표 배임 고발 접수]</p>
+      <p><span class="speaker michael">마이클:</span> 그러니까, 우리도 연락이 안 된다고요!</p>
+      <p><span class="speaker joel">조엘:</span> 대표는 없습니다.</p>
+      <p class="narration"><span class="donald">도날드</span>를 찾는 전화벨이 쉴 새 없이 울린다. 블랙코퍼레이션은 패닉에 빠진다.</p>
+      <hr class="divider">
+      <p class="narration">몇 달 뒤 — 호치민의 고층 레지던스 발코니. 밤공기가 따뜻하다. 아래에서는 오토바이 행렬이 끝없이 흐른다. <span class="donald">도날드</span>는 와인잔을 들고 서 있다.</p>
+      <p><span class="speaker donald">도날드:</span> 결국 능력 있는 사람만 살아남는 거야.</p>
+      <p class="narration">노트북 화면에 켜져 있는 뉴스들.</p>
+      <p class="narration">[국제 공조 요청 — 관할 불가 통지] [대한민국 소송 절차 장기화 전망]</p>
+      <p class="narration">그때 마침, 현지 파트너가 다가와 말한다.</p>
+      <p><span class="speaker lawyer">현지 파트너:</span> 초기 투자자 세 명 확정됐습니다. 세 분 모두 대표님의 한국 스토리텔링 경험을 높이 평가합니다.</p>
+      <p><span class="speaker donald">도날드:</span> 네. 숫자는 거짓말하지 않습니다. 거짓말하는 건 능력없는 사람들 뿐이죠.</p>
+      <p class="narration"><span class="donald">도날드</span>는 계약서에 서명하며 독백한다.</p>
+      <p><span class="speaker donald">도날드:</span> 실패도 데이터다. 난 그 데이터를 들고 나온 사람이다.</p>
+      <p class="narration">휴대폰에 마지막으로 한국 뉴스 알림이 뜬다.</p>
+      <p class="emphasis">[블랙코퍼레이션 파산 절차 돌입]</p>
+      <p class="narration"><span class="donald">도날드</span>는 독백한다.</p>
+      <p class="narration" style="font-style:italic; color:#555;">"침몰한 배를 끝까지 지키는 건 선장이 아니다. 배를 버리고 교체해서라도, 나아가는 사람이 선장이다. 이번엔, 더 크게 간다."</p>
+      <p class="narration">발코니 난간에 손을 얹는다. 도시는 거대하다. 시장도, 기회도. 고층 빌딩 한 층, 불빛이 환하게 켜진 방의 난간에서.</p>
+      <p class="narration"><span class="donald">도날드</span>가 웃고 있다.</p>
+      <p class="narration">무너진 건 회사였지, 그가 아니었다.</p>
+      <p class="emphasis" style="text-align:center; font-size:18px; line-height:2.2;">"난 살아남았다.<br>그리고<br>다시 시작한다."</p>
+    </div>
+    <div class="end-tag">— END —</div>
+    <button class="btn" style="margin-top:24px;" onclick="goTo('commentary')">코멘터리 읽기</button>
+    <button class="btn" style="margin-top:8px;" onclick="restartGame()">처음으로 돌아가기</button>
+    <div class="pg-num">39–41</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     코멘터리 (p43~44)
+══════════════════════════════════════ -->
+<div id="commentary" class="page">
+  <div class="card">
+    <div class="section-title">코멘터리</div>
+    <div class="commentary-text">
+      <p>조직 안에서의 생존은 사실 우리 모두가 이미 하고 있는 현실 서바이벌입니다. 다양한 조직을 보고 경험하면서, 무너지는 조직에는 공통된 무언가가 있다는 걸 느꼈습니다. 그 몰락과 재건, 성장의 과정을 압축해서 직접 경험할 수 있는 형태로 만들 수 있지 않을까. 그렇게 블랙코퍼레이션이 만들어졌습니다.</p>
+      <p>스타트업은 경험이 쌓이기 전에 문제와 시행착오를 먼저 마주하는 곳입니다. 혼란스러운 조직의 분위기를 묘사하기에 이만한 배경이 없다고 생각했습니다. 그리고 수많은 직장인들이 공감하고 몰입할 수 있는 배경이라고 생각했습니다. 게임이 끝난 뒤, 자신의 경험과 게임 속 경험을 비교하며 공감과 카타르시스, 그리고 여운을 느낄 수 있는 게임을 만들고 싶었습니다.</p>
+      <p>머더 미스터리 장르의 게임을 하다 보면, 가끔 특정 플레이어가 소외되는 순간이 생기곤 합니다. 저는 모두가 주인공으로 남을 수 있는 게임을 추구했습니다. 그 누구도 단순한 조연으로 끝나지 않는 이야기. 그것이 이 게임을 만들면서 가장 중요하게 생각한 가치였습니다. 때문에 여섯 명의 캐릭터 모두에게 애정을 담았습니다. 이 게임을 구매해주신 여러분께 그 애정이 온전히 전해지기를 바랍니다.</p>
+      <p>캐서린과 그레이스는 직장 동료나 상사로부터 스트레스를 받는 많은 분들이 공감할 수 있는 캐릭터입니다. 부당한 상황 속에서도 끝까지 자신의 자리를 지키다가, 결국 자신만의 방식으로 답을 찾아가는 두 사람의 이야기가 이 게임을 통해 조금이나마 위로가 되었으면 합니다. 게임 안에서만큼은, 도날드와 마이클을 향해 억눌린 감정을 마음껏 해소하셨기를 바랍니다.</p>
+      <p>설리번은 가망이 없어 보이는 회사에 끝까지 애정을 품고 있는 캐릭터입니다. 냉정해 보이는 그녀의 내면에는 누구보다 뜨거운 책임감이 있었습니다. 많은 분들이 설리번의 모습에서 자신을 발견하셨을지도 모르겠습니다.</p>
+      <p>조엘은 감정 없이 시키는 일만 한다는 인상을 줄 수 있지만, 그는 누구보다 자신이 할 수 있는 것과 할 수 없는 것을 정확히 알고 있는 사람입니다. 조용히, 묵묵히 자기 자리에서 끝까지 자기 할 일을 하는 것. 그것이 조엘이 선택한 방식이었습니다.</p>
+      <p>마이클은 무능하면서도 정치질로 자리를 지키는, 전형적인 비호감 역할입니다. 하지만 캐릭터를 구축하다 보니, 그에게도 이 업계와 일에 대한 진짜 애정이 있었다는 사실을 발견하게 되었습니다. 그 사실을 알고 나서, 그에게 무조건적인 비극을 부여하고 싶지 않았습니다. 마이클의 엔딩은 몰락이 아니라 전환으로 설계했습니다. 역할을 바꾸고, 좋아하는 일을 취미에서부터 다시 시작하는 방향으로. 이 게임에서의 엔딩이 그의 끝이 아니라, 여정의 일부라고 생각했기 때문입니다.</p>
+      <p>그리고 마지막으로, 최종 빌런처럼 묘사된 도날드 역시 자신의 한계를 마주하고 처절히 고군분투 중인, 성장의 과정에 있는 캐릭터임을 캐릭터를 구축하며 깨달았습니다. 회사와 일, 동료들을 향한 애정이 환멸로 변해가는 과정은 직장인이라면 많은 분들이 공감하실 것입니다. 책임을 받아들이는 그의 모습을 쓰며 그를 응원하면서, 끝까지 도피하기도 하는 그의 이야기를 쓰면서 진심으로 안타까웠습니다.</p>
+      <p>어딘가에 있을 현실의 도날드, 설리번, 조엘, 마이클, 캐서린, 그레이스와 여러분들의 삶을 응원합니다.</p>
+      <p>앞으로도 특정 집단 안에서 벌어지는 상황과 관계를 깊이 있게 담은 게임을 계속 만들어가고 싶습니다. 블랙코퍼레이션은 그 시작입니다.</p>
+      <p>끝까지 함께해주셔서 진심으로 감사합니다.</p>
+      <p style="text-align:right; color:#666; margin-top:24px;">— 현실안주형 작가 드림 —</p>
+    </div>
+    <button class="btn" style="margin-top:24px;" onclick="restartGame()">처음으로 돌아가기</button>
+    <div class="pg-num">43–44</div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════════
+// 상태 관리
+// ════════════════════════════════════════
+const state = {
+  result:  null,    // 'all_success' | 'two_success' | 'one_success' | 'all_fail'
+  targets: [],      // 구조조정된 캐릭터 ID 배열
+  history: ['cover'] // 방문 기록 (뒤로가기용)
+};
+
+const CHAR_NAMES = {
+  sullivan:  '설리번',
+  joel:      '조엘',
+  michael:   '마이클',
+  catherine: '캐서린',
+  grace:     '그레이스'
+};
+
+const RESULT_NAMES = {
+  all_success: '전부 성공',
+  two_success: '2개 성공',
+  one_success: '1개 성공',
+  all_fail:    '전부 실패'
+};
+
+// ════════════════════════════════════════
+// 페이지 이동
+// ════════════════════════════════════════
+function goTo(pageId) {
+  const current = document.querySelector('.page.active');
+  if (current) current.classList.remove('active');
+  const next = document.getElementById(pageId);
+  if (!next) { console.warn('페이지 없음:', pageId); return; }
+  next.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // 히스토리 기록
+  if (state.history[state.history.length - 1] !== pageId) {
+    state.history.push(pageId);
+  }
+
+  // 뒤로가기 버튼
+  document.getElementById('back-btn').style.display =
+    state.history.length > 1 ? 'block' : 'none';
+
+  updateStateBar();
+
+  // 동적 네비게이션 렌더링
+  renderPageNav(pageId);
+}
+
+// 페이지별 동적 네비게이션 렌더러
+function renderPageNav(pageId) {
+  const r = state.result;
+
+  // ── 구조조정 캐릭터 면담 페이지 ──
+  const charMap = {
+    restr_sullivan:  'sullivan',
+    restr_joel:      'joel',
+    restr_catherine: 'catherine',
+    restr_grace:     'grace',
+    restr_michael:   'michael',
+  };
+
+  if (charMap[pageId]) {
+    const char   = charMap[pageId];
+    const navEl  = document.getElementById(pageId + '_nav');
+    const btnsEl = document.getElementById(pageId + '_btns');
+    if (!navEl || !btnsEl) return;
+
+    let navHtml = '', btnsHtml = '';
+
+    if (char === 'joel' && (r === 'one_success' || r === 'all_fail')) {
+      navHtml  = '<strong>1개 성공 / 전부 실패 — 조엘 지목</strong> 시 즉시 비밀 감사로 이동합니다. (28p)';
+      btnsHtml = `<button class="btn btn-red" onclick="afterRestructure('joel')">→ 비밀 감사로 이동 (28p)</button>`;
+    } else if (r === 'two_success') {
+      if (char === 'michael') {
+        navHtml  = '<strong>2개 성공</strong> — 마이클 지목 시 22페이지(B)로 바로 이동합니다.';
+        btnsHtml = `<button class="btn btn-gold" onclick="afterRestructure('michael')">→ 그 후 블랙코퍼레이션 (B)로 이동 (22p)</button>`;
+      } else {
+        navHtml  = '<strong>2개 성공</strong> → 20페이지로 이동합니다.';
+        btnsHtml = `<button class="btn btn-gold" onclick="afterRestructure('${char}')">→ 그 후 블랙코퍼레이션 (A)로 이동 (20p)</button>`;
+      }
+    } else if (r === 'one_success' || r === 'all_fail') {
+      const isFail = r === 'all_fail';
+      const CHARS = [
+        { id: 'sullivan',  label: '설리번',   cls: 'sullivan',  page: 14 },
+        { id: 'joel',      label: '조엘',     cls: 'joel',      page: 15 },
+        { id: 'michael',   label: '마이클',   cls: 'michael',   page: 18 },
+        { id: 'catherine', label: '캐서린',   cls: 'catherine', page: 16 },
+        { id: 'grace',     label: '그레이스', cls: 'grace',     page: 17 },
+      ];
+
+      if (state.targets.length === 0) {
+        // 1순위 읽음 → 하단에 2순위 버튼 인라인
+        const remaining = CHARS.filter(c => c.id !== char);
+        navHtml  = '<strong>1순위 낭독 완료.</strong> 이어서 2순위 구조조정 대상자를 선택하세요.';
+        btnsHtml = remaining.map(c =>
+          `<button class="btn" onclick="selectAsFirstAndGoTo('${char}','${c.id}')">
+            2순위: <b class="${c.cls}">${c.label}</b> → ${c.page}p
+          </button>`
+        ).join('');
+      } else {
+        // 2순위 읽음 → 완료 버튼
+        if (isFail) {
+          navHtml  = '<strong>전부 실패</strong> — 2순위까지 낭독 완료. 비밀 감사로 이동합니다.';
+          btnsHtml = `<button class="btn btn-red" onclick="afterRestructure('${char}')">→ 비밀 감사로 이동 (28p)</button>`;
+        } else {
+          navHtml  = '<strong>1개 성공</strong> — 2순위까지 낭독 완료. 그 후 이야기로 이동합니다.';
+          btnsHtml = `<button class="btn btn-gold" onclick="afterRestructure('${char}')">→ 그 후 블랙코퍼레이션으로 이동</button>`;
+        }
+      }
+    }
+
+    navEl.innerHTML  = navHtml;
+    btnsEl.innerHTML = btnsHtml;
+    return;
+  }
+
+  // ── aftermath_a ──
+  if (pageId === 'aftermath_a') { renderAftermathA(); return; }
+
+  // ── aftermath_b ──
+  if (pageId === 'aftermath_b') { renderAftermathB(); return; }
+
+  // ── exit_* ──
+  const exitCharMap = {
+    exit_sullivan: 'sullivan', exit_joel: 'joel', exit_michael: 'michael',
+    exit_catherine: 'catherine', exit_grace: 'grace'
+  };
+  if (exitCharMap[pageId]) { renderExitNext(exitCharMap[pageId]); return; }
+
+  // ── 1개 성공 / 전부 실패 — 1순위 선택 화면 ──
+  if (pageId === 'one_success' || pageId === 'all_fail') {
+    const isFail = pageId === 'all_fail';
+    const navEl  = document.getElementById(pageId + '_nav');
+    const btnsEl = document.getElementById(pageId + '_btns');
+    if (!navEl || !btnsEl) return;
+
+    const allChars = [
+      { id: 'sullivan',  label: '설리번',   cls: 'sullivan',  page: 14 },
+      { id: 'joel',      label: '조엘',     cls: 'joel',      page: 15 },
+      { id: 'michael',   label: '마이클',   cls: 'michael',   page: 18 },
+      { id: 'catherine', label: '캐서린',   cls: 'catherine', page: 16 },
+      { id: 'grace',     label: '그레이스', cls: 'grace',     page: 17 },
+    ];
+
+    navEl.innerHTML = `<strong>${isFail ? '전부 실패' : '1개 성공'}</strong> — <b>1순위</b> 구조조정 대상자를 선택하세요.`;
+    btnsEl.innerHTML = allChars.map(c =>
+      `<button class="btn" onclick="selectRestructure('${c.id}')">
+        <b class="${c.cls}">${c.label}</b>을(를) 지목 → ${c.page}p
+      </button>`
+    ).join('');
+  }
+}
+
+function goBack() {
+  if (state.history.length < 2) return;
+  state.history.pop();
+  const prev = state.history[state.history.length - 1];
+  const current = document.querySelector('.page.active');
+  if (current) current.classList.remove('active');
+  const target = document.getElementById(prev);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('back-btn').style.display =
+    state.history.length > 1 ? 'block' : 'none';
+  updateStateBar();
+}
+
+// ════════════════════════════════════════
+// 상태 표시바
+// ════════════════════════════════════════
+function updateStateBar() {
+  const bar = document.getElementById('state-bar');
+  if (!state.result) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  let html = RESULT_NAMES[state.result];
+  if (state.targets.length > 0) {
+    html += '<br>지목: ' + state.targets.map(t => CHAR_NAMES[t]).join(', ');
+  }
+  bar.innerHTML = html;
+}
+
+// ════════════════════════════════════════
+// 프로젝트 결과 설정
+// ════════════════════════════════════════
+function toggleToc() {
+  const content = document.getElementById('toc-content');
+  const btn = document.getElementById('toc-toggle-btn');
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    btn.textContent = '접기 ▲';
+  } else {
+    content.style.display = 'none';
+    btn.textContent = '펼치기 ▼';
+  }
+}
+
+function setResult(result) {
+  state.result  = result;
+  state.targets = [];
+  const dest = {
+    all_success: 'all_success',
+    two_success: 'two_success',
+    one_success: 'one_success',
+    all_fail:    'all_fail'
+  }[result];
+  goTo(dest);
+}
+
+// ════════════════════════════════════════
+// 전부 성공 경로: 캐릭터 지목
+// ════════════════════════════════════════
+function pickTarget(character) {
+  // 전부 성공 경로
+  const dest = {
+    sullivan:  'success_sullivan',
+    joel:      'success_joel',
+    michael:   'success_michael',
+    catherine: 'success_catherine',
+    grace:     'success_grace'
+  }[character];
+  goTo(dest);
+}
+
+// ════════════════════════════════════════
+// 구조조정 경로: 캐릭터 면담 후 라우팅
+// ════════════════════════════════════════
+function afterRestructure(character) {
+  state.targets.push(character);
+  updateStateBar();
+
+  const r = state.result;
+
+  // ── 전부 성공은 이 함수 미사용 (pickTarget 사용)
+  if (r === 'all_success') { goTo('all_success_ending'); return; }
+
+  // ── 조엘 특수 케이스: 1개/전부실패 → 비밀 감사 직행
+  if (character === 'joel' && (r === 'one_success' || r === 'all_fail')) {
+    goTo('secret_audit');
+    return;
+  }
+
+  // ── 2개 성공: 1명만 처리, 이후 aftermath
+  if (r === 'two_success') {
+    goTo(character === 'michael' ? 'aftermath_b' : 'aftermath_a');
+    return;
+  }
+
+  // ── 1개 성공 / 전부 실패: 2명 처리 필요
+  if (state.targets.length < 2) {
+    // 1순위 읽음 → 2순위 선택 화면으로
+    goTo(r === 'one_success' ? 'one_success' : 'all_fail');
+    return;
+  }
+
+  // 2순위까지 읽었을 때
+  if (r === 'one_success') {
+    // 마이클이 포함이면 aftermath_a 생략
+    goTo(state.targets.includes('michael') ? 'aftermath_b' : 'aftermath_a');
+  } else {
+    // 전부 실패 → 비밀 감사
+    goTo('secret_audit');
+  }
+}
+
+// ════════════════════════════════════════
+// 1순위 기록 + 2순위 페이지로 직접 이동
+// ════════════════════════════════════════
+function selectAsFirstAndGoTo(firstChar, secondChar) {
+  state.targets.push(firstChar);
+  updateStateBar();
+  goTo('restr_' + secondChar);
+}
+
+// ════════════════════════════════════════
+// 구조조정 캐릭터 선택 헬퍼
+// ════════════════════════════════════════
+function selectRestructure(character) {
+  const dest = {
+    sullivan:  'restr_sullivan',
+    joel:      'restr_joel',
+    michael:   'restr_michael',
+    catherine: 'restr_catherine',
+    grace:     'restr_grace'
+  }[character];
+  goTo(dest);
+}
+
+// ════════════════════════════════════════
+// 임시대표 선임 후 이동
+// ════════════════════════════════════════
+function selectActing(character) {
+  const dest = {
+    sullivan:  'acting_sullivan',
+    joel:      'acting_joel',
+    michael:   'acting_michael',
+    catherine: 'acting_catherine',
+    grace:     'acting_grace'
+  }[character];
+  goTo(dest);
+}
+
+// ════════════════════════════════════════
+// 증거물 카운트
+// ════════════════════════════════════════
+function updateEvidenceCount() {
+  const checkboxes = document.querySelectorAll('#evidence-form input[type="checkbox"]');
+  let count = 0;
+  checkboxes.forEach(cb => { if (cb.checked) count++; });
+  const display = document.getElementById('evidence-count-display');
+  if (display) {
+    display.textContent = `제출 증거물: ${count}개`;
+    display.style.color = count >= 4 ? '#c0001a' : '#1a7a1a';
+  }
+}
+
+function submitEvidence() {
+  const checkboxes = document.querySelectorAll('#evidence-form input[type="checkbox"]');
+  let count = 0;
+  checkboxes.forEach(cb => { if (cb.checked) count++; });
+  goTo(count >= 4 ? 'evidence_many' : 'evidence_few');
+}
+
+// ════════════════════════════════════════
+// 게임 리셋
+// ════════════════════════════════════════
+function restartGame() {
+  state.result  = null;
+  state.targets = [];
+  state.history = ['cover'];
+  document.getElementById('state-bar').style.display = 'none';
+  document.getElementById('back-btn').style.display  = 'none';
+  goTo('cover');
+}
+
+// ════════════════════════════════════════
+// aftermath_a: 구조조정된 캐릭터 단락 숨기기
+// ════════════════════════════════════════
+function renderAftermathA() {
+  document.querySelectorAll('#aftermath_a .aftermath-section').forEach(el => {
+    const char = el.getAttribute('data-char');
+    el.style.display = state.targets.includes(char) ? 'none' : 'block';
+  });
+}
+
+// ════════════════════════════════════════
+// aftermath_b: 구조조정 캐릭터 퇴사 엔딩 버튼
+// ════════════════════════════════════════
+function renderAftermathB() {
+  const navEl  = document.getElementById('aftermath_b_nav');
+  const btnsEl = document.getElementById('aftermath_b_btns');
+  if (!navEl || !btnsEl) return;
+
+  const exitPages = {
+    sullivan: 'exit_sullivan', joel: 'exit_joel',
+    michael: 'exit_michael', catherine: 'exit_catherine', grace: 'exit_grace'
+  };
+  const exitLabels = {
+    sullivan: '설리번', joel: '조엘',
+    michael: '마이클', catherine: '캐서린', grace: '그레이스'
+  };
+
+  navEl.innerHTML = '<strong>구조조정된 인물의 엔딩을 순서대로 낭독해주세요.</strong>';
+  btnsEl.innerHTML = state.targets.map(char =>
+    `<button class="btn btn-blue" onclick="goTo('${exitPages[char]}')">
+      → <b class="${char}">${exitLabels[char]}</b>의 이야기 (엔딩)
+    </button>`
+  ).join('');
+}
+
+// ════════════════════════════════════════
+// exit_* 페이지: 다음 엔딩 or 처음으로
+// ════════════════════════════════════════
+function renderExitNext(pageChar) {
+  const nextEl = document.getElementById('exit_' + pageChar + '_next');
+  if (!nextEl) return;
+
+  const exitPages = {
+    sullivan: 'exit_sullivan', joel: 'exit_joel',
+    michael: 'exit_michael', catherine: 'exit_catherine', grace: 'exit_grace'
+  };
+  const exitLabels = {
+    sullivan: '설리번', joel: '조엘',
+    michael: '마이클', catherine: '캐서린', grace: '그레이스'
+  };
+
+  const idx = state.targets.indexOf(pageChar);
+  const nextChar = state.targets[idx + 1];
+
+  if (nextChar) {
+    nextEl.innerHTML = `<button class="btn btn-blue" onclick="goTo('${exitPages[nextChar]}')">
+      → <b class="${nextChar}">${exitLabels[nextChar]}</b>의 이야기 읽기
+    </button>`;
+  } else {
+    nextEl.innerHTML = `
+      <button class="btn" onclick="goTo('commentary')">코멘터리 읽기</button>
+      <button class="btn" style="margin-top:8px;" onclick="restartGame()">처음으로 돌아가기</button>`;
+  }
+}
+
+// ════════════════════════════════════════
+// 점수 계산기
+// ════════════════════════════════════════
+const SC_CHARS = ['donald','sullivan','joel','michael','catherine','grace'];
+const SC_PROJS = ['a','b','c'];
+const scVals = {};
+SC_PROJS.forEach(p => { scVals[p] = {}; SC_CHARS.forEach(c => { scVals[p][c] = 0; }); });
+let _scoreResult = null;
+
+function adj(proj, char, delta) {
+  scVals[proj][char] = Math.max(0, scVals[proj][char] + delta);
+  document.getElementById('v_' + proj + '_' + char).textContent = scVals[proj][char];
+}
+
+function calcScore(proj) {
+  const v = scVals[proj];
+  return (v.donald + v.sullivan + v.joel + v.catherine + v.grace) - v.michael;
+}
+
+function checkScores() {
+  const LABELS = ['전부 실패하였다.','1개 성공하였다.','2개 성공하였다.','전부 성공하였다.'];
+  const KEYS   = ['all_fail','one_success','two_success','all_success'];
+  let successCount = 0;
+  SC_PROJS.forEach(proj => {
+    const score = calcScore(proj);
+    const ok    = score >= 8;
+    if (ok) successCount++;
+    document.getElementById('ps_'       + proj).className   = 'proj-section ' + (ok ? 'success' : 'fail');
+    document.getElementById('rb_'       + proj).className   = 'result-box '   + (ok ? 'success' : 'fail');
+    document.getElementById('rb_score_' + proj).textContent = score + '점';
+    document.getElementById('rb_vrd_'   + proj).textContent = ok ? '성공' : '실패';
+  });
+  _scoreResult = KEYS[successCount];
+  document.getElementById('result_total').textContent = LABELS[successCount];
+  const rc = document.getElementById('result_card');
+  rc.style.display = 'block';
+  rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function applyScoreResult() {
+  if (_scoreResult) setResult(_scoreResult);
+}
+
+function resetCalc() {
+  SC_PROJS.forEach(p => {
+    document.getElementById('ps_' + p).className = 'proj-section';
+    SC_CHARS.forEach(c => {
+      scVals[p][c] = 0;
+      document.getElementById('v_' + p + '_' + c).textContent = '0';
+    });
+  });
+  ['rb_a','rb_b','rb_c'].forEach(id => { document.getElementById(id).className = 'result-box'; });
+  ['rb_score_a','rb_score_b','rb_score_c'].forEach(id => { document.getElementById(id).textContent = '—'; });
+  ['rb_vrd_a','rb_vrd_b','rb_vrd_c'].forEach(id => { document.getElementById(id).textContent = '—'; });
+  document.getElementById('result_total').textContent = '—';
+  document.getElementById('result_card').style.display = 'none';
+  _scoreResult = null;
+}
+</script>
+</body>
+</html>
