@@ -2067,7 +2067,7 @@ SC_PROJS.forEach(p => { scVals[p] = {}; SC_CHARS.forEach(c => { scVals[p][c] = 0
 let _scoreResult = null;
 
 function adj(proj, char, delta) {
-  scVals[proj][char] = Math.max(0, scVals[proj][char] + delta);
+  scVals[proj][char] = Math.max(0, Math.min(2, scVals[proj][char] + delta));
   document.getElementById('v_' + proj + '_' + char).textContent = scVals[proj][char];
 }
 
