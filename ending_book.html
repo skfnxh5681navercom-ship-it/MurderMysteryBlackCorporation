@@ -8,7 +8,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
 
 body {
-  background: #f0f0ec;
+  background: #faf8f5;
   color: #222;
   font-family: 'Noto Serif KR', 'Malgun Gothic', 'Apple SD Gothic Neo', serif;
   min-height: 100vh;
@@ -41,40 +41,113 @@ body {
 /* ── 표지 ── */
 .cover-wrap {
   text-align: center;
-  padding: 60px 40px 50px;
-  border: 2px solid #ccc;
+  padding: 52px 32px 48px;
+  border: 1px solid #ddd8d0;
   position: relative;
+  background: #fff;
 }
 .stamp {
   display: inline-block;
-  border: 4px solid #b52200;
-  color: #b52200;
-  font-size: 22px;
+  border: 3px solid #c0200e;
+  color: #c0200e;
+  font-size: 15px;
   font-weight: 900;
-  padding: 6px 14px;
+  padding: 5px 13px;
   letter-spacing: 3px;
-  transform: rotate(-12deg);
-  font-family: 'Arial Black', Impact, sans-serif;
-  margin-bottom: 36px;
+  transform: rotate(-4deg);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  margin-bottom: 32px;
 }
 .cover-title {
-  font-size: 52px;
+  font-size: 44px;
   font-weight: 900;
   color: #111;
   letter-spacing: -1px;
   line-height: 1.15;
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
-.lock-icon { font-size: 64px; margin-bottom: 28px; display: block; }
 .warning-box {
-  background: #111;
-  border: 2px solid #111;
+  background: #f5f2ed;
+  border: 1px solid #ddd8d0;
+  border-top: 3px solid #c0200e;
   display: inline-block;
-  padding: 16px 32px;
-  margin-bottom: 36px;
+  padding: 14px 28px;
+  margin-bottom: 24px;
 }
-.warning-box p { font-size: 17px; line-height: 2; color: #f0f0ec; }
-.brand-label { font-size: 17px; font-weight: 700; color: #555; letter-spacing: 5px; }
+.warning-box p:first-child { font-size: 11px; font-weight: 700; letter-spacing: 4px; color: #c0200e; line-height: 2; }
+.warning-box p { font-size: 13px; line-height: 1.9; color: #444; }
+.brand-label { font-size: 11px; font-weight: 700; color: #999; letter-spacing: 6px; }
+
+/* ── 선택 카드 ── */
+.sel-card {
+  text-align: left;
+  border: 2px solid #111;
+  background: #fff;
+  padding: 20px 20px 18px;
+}
+.sel-card.secondary {
+  border: 1px solid #ddd8d0;
+  background: #f5f2ed;
+}
+.sel-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #c0200e;
+  margin-bottom: 8px;
+}
+.sel-card.secondary .sel-label { color: #999; }
+.sel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.sel-btn {
+  width: 100%;
+  padding: 13px;
+  background: #111;
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.3px;
+}
+.sel-btn:active { opacity: 0.8; }
+.sel-card.secondary .sel-btn {
+  background: #e0dbd4;
+  color: #111;
+}
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+.or-divider::before, .or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ddd8d0;
+}
+.or-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #ddd8d0;
+  background: #faf8f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #999;
+  flex-shrink: 0;
+}
 
 /* ── 섹션 헤더 ── */
 .section-title {
@@ -375,15 +448,23 @@ hr.divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
   <div class="card cover-wrap">
     <div class="stamp">CONFIDENTIAL</div>
     <div class="cover-title">사건 결말서</div>
-    <span class="lock-icon">🔒</span>
     <div class="warning-box">
-      <p>경고</p>
+      <p>경 고</p>
       <p>별도의 지시가 있을 때까지<br>절대 열람하지 마시오.</p>
     </div>
-    <div class="brand-label">Black Corp.</div>
-    <div style="margin-top:48px; display:flex; flex-direction:column; gap:12px; align-items:center;">
-      <button class="btn btn-red" onclick="goTo('score_narration')" style="width:260px; font-size:15px; padding:14px 20px;">▶ 점수 계산 후 열람하기</button>
-      <button class="btn" onclick="goTo('toc')" style="width:260px; font-size:15px; padding:14px 20px; background:#444; color:#fff; border-color:#444;">▶ 사건 결말서 열람하기</button>
+    <div class="brand-label">BLACK CORP.</div>
+    <div style="margin-top:36px;">
+      <div class="sel-card">
+        <div class="sel-label">선택 A</div>
+        <div class="sel-title">프로젝트 성공 여부를 아직 모릅니다</div>
+        <button class="sel-btn" onclick="goTo('score_narration')">점수 계산 후 열람하기</button>
+      </div>
+      <div class="or-divider"><div class="or-circle">OR</div></div>
+      <div class="sel-card secondary">
+        <div class="sel-label">선택 B</div>
+        <div class="sel-title">모든 프로젝트 결과를 알고 있습니다</div>
+        <button class="sel-btn" onclick="goTo('toc')">바로 열람하기</button>
+      </div>
     </div>
   </div>
 </div>
